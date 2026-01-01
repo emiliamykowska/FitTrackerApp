@@ -17,9 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,16 +25,24 @@ import androidx.compose.ui.unit.sp
 import com.example.fittracker.ui.components.InputTextField
 import com.example.fittracker.ui.components.RoundedButton
 import com.example.fittracker.ui.components.Logo
-import com.example.fittracker.ui.theme.DarkGreen
-import com.example.fittracker.ui.theme.LightGreen
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import android.widget.Toast
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import kotlin.text.trim
 
 
 @Composable
 
-fun LoginScreen(onNavigateToRegister: () -> Unit) {
-    val email = remember { mutableStateOf("") } // mutableStateOf wraps the initial value ("" here, so like a blank paper) into MutableState
+fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToHome: () -> Unit) {
+    var email by remember { mutableStateOf("") } // mutableStateOf wraps the initial value ("" here, so like a blank paper) into MutableState
     // remember allows to remember this state
-    val password = remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    val auth = Firebase.auth
+    val context = androidx.compose.ui.platform.LocalContext.current
+
+
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -98,8 +104,8 @@ fun LoginScreen(onNavigateToRegister: () -> Unit) {
                     textAlign = TextAlign.Left)
 
                 InputTextField(
-                    value = email.value, //display email.value
-                    onValueChange = { email.value = it }, //onValueChange = { newValue -> email.value = newValue }
+                    value = email, //display email.value
+                    onValueChange = { email = it }, //onValueChange = { newValue -> email.value = newValue }
                     label = "you@example.com"
                 )
 
@@ -114,14 +120,30 @@ fun LoginScreen(onNavigateToRegister: () -> Unit) {
                     )
 
                 InputTextField(
-                    value = password.value,
-                    onValueChange = { password.value = it },
+                    value = password,
+                    onValueChange = { password = it },
                     label = "*****",
                     isPassword = true
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
-                RoundedButton(text="Sign In")
+                RoundedButton(
+                    text="Sign In",
+                    onClick = {
+                        val cleanEmail = email.trim()
+
+                        if (cleanEmail.isNotEmpty() && password.isNotEmpty()){
+                            auth.signInWithEmailAndPassword(cleanEmail, password)
+                                .addOnCompleteListener {
+                                    task -> if (task.isSuccessful) {
+                                        onNavigateToHome()
+                                    } else {
+                                        val errorText = task.exception?.localizedMessage ?: "Unknown error occurred"
+                                        Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                        }
+                    })
 
                 Spacer(modifier = Modifier.height(10.dp))
 

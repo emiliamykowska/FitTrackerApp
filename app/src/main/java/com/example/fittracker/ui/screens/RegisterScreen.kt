@@ -1,6 +1,5 @@
 package com.example.fittracker.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,11 +12,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,18 +26,19 @@ import androidx.compose.ui.unit.sp
 import com.example.fittracker.ui.components.InputTextField
 import com.example.fittracker.ui.components.RoundedButton
 import com.example.fittracker.ui.components.Logo
-import com.example.fittracker.ui.theme.DarkGreen
-import com.example.fittracker.ui.theme.LightGreen
-
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import android.widget.Toast
 
 @Composable
 
 fun RegisterScreen(onNavigateToLogin: () -> Unit) { //function doesnt take anything and returns Unit (void)
-    val email = remember { mutableStateOf("") } // mutableStateOf wraps the initial value ("" here, so like a blank paper) into MutableState
+    var email by remember { mutableStateOf("") } // mutableStateOf wraps the initial value ("" here, so like a blank paper) into MutableState
     // remember allows to remember this state
-    val password = remember { mutableStateOf("") }
-
-    val name = remember {mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    val auth = Firebase.auth // firebase initialization
+    val context = androidx.compose.ui.platform.LocalContext.current // same as this@RegisterActivity, but that does not exist in compose
 
     Column (
         modifier = Modifier
@@ -100,8 +101,8 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) { //function doesnt take anyth
                     textAlign = TextAlign.Left)
 
                 InputTextField(
-                    value = name.value,
-                    onValueChange = { name.value = it },
+                    value = name,
+                    onValueChange = { name = it },
                     label = "John Doe"
                 )
 
@@ -115,8 +116,8 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) { //function doesnt take anyth
                     textAlign = TextAlign.Left)
 
                 InputTextField(
-                    value = email.value, //display email.value
-                    onValueChange = { email.value = it }, //onValueChange = { newValue -> email.value = newValue }
+                    value = email, //display email.value
+                    onValueChange = { email = it }, //onValueChange = { newValue -> email.value = newValue }
                     label = "you@example.com"
                 )
 
@@ -131,15 +132,40 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) { //function doesnt take anyth
                 )
 
                 InputTextField(
-                    value = password.value,
-                    onValueChange = { password.value = it },
+                    value = password,
+                    onValueChange = { password = it },
                     label = "*****",
                     isPassword = true
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                RoundedButton(text="Create Account")
+                RoundedButton(
+                    text="Create Account",
+                    onClick = {
+                        val cleanEmail = email.trim()
+                        val cleanPassword = password.trim()
+                        val cleanName = name.trim()
+
+                        if (cleanName.isNotEmpty() && cleanEmail.isNotEmpty() && cleanPassword.isNotEmpty()) {
+                            auth.createUserWithEmailAndPassword(cleanEmail, cleanPassword)
+                                .addOnCompleteListener{ task -> //task is an asynchronous object
+                                    if (task.isSuccessful) {
+                                        Toast.makeText(context, "Successfully registered!", Toast.LENGTH_SHORT).show()
+                                        onNavigateToLogin()
+                                    }
+                                    else {
+                                        val errorText = task.exception?.localizedMessage ?: "An unknown error occurred"//localized message gives human readable reason for error
+                                        Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                            }
+                        else {
+                            Toast.makeText(context, "Fields cannot be empty!", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                )
+
 
                 Spacer(modifier = Modifier.height(10.dp))
 

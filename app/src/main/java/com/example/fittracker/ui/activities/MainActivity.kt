@@ -18,6 +18,9 @@ import com.example.fittracker.ui.screens.RegisterScreen
 import com.example.fittracker.ui.theme.DarkGreen
 import com.example.fittracker.ui.theme.FitTrackerTheme
 import com.example.fittracker.ui.theme.LightGreen
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 class MainActivity: ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?){ // the function is called once, when app is launched
@@ -26,28 +29,29 @@ class MainActivity: ComponentActivity(){
         super.onCreate(savedInstanceState)
         // before doing things below call parent onCreate
 
+        val user = Firebase.auth.currentUser
+
         setContent { // tells to use jetpackcompose, not xml
             FitTrackerTheme {
 
-                var currentScreen by remember { mutableStateOf("login") } //create state that remembers which screen is shown, login at first
+                var currentScreen by remember { mutableStateOf(if (user != null) "home" else "login") } //create state that remembers which screen is shown, login at first
                 // mutablestateof does recompososition, so if it's changed the screen is refreshed
                 // remember so the state states there after each micro refresh
                 // currentscreen is of type MutableState<String>, so there is by so .value dont have to be used
                 // by is a "delegat"
 
-                val isLoggedIn = false
-
                 Box (modifier = Modifier
                     .fillMaxSize()
                     .background(Brush.verticalGradient(
                         colors = listOf(LightGreen, DarkGreen)))){
-                    if (isLoggedIn) {
-                        HomeScreen()
-                    } else {
-                        when (currentScreen){ //dont have to use currentScreen.value coz of by earlier
-                            "login" -> LoginScreen(onNavigateToRegister = {currentScreen = "register"})
-                            "register" -> RegisterScreen(onNavigateToLogin = {currentScreen = "login"})
-                        }
+                    when (currentScreen){ //dont have to use currentScreen.value coz of by earlier
+                        "login" -> LoginScreen(
+                            onNavigateToRegister = {currentScreen = "register"},
+                            onNavigateToHome = { currentScreen = "home" })
+                        "register" -> RegisterScreen(onNavigateToLogin = {currentScreen = "login"})
+                        "home" -> HomeScreen(onLogout = {
+                            Firebase.auth.signOut()
+                            currentScreen = "login"})
                     }
                 }
 
