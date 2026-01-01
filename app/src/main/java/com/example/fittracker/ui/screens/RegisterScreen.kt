@@ -29,10 +29,16 @@ import com.example.fittracker.ui.components.Logo
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Brush
+import com.example.fittracker.ui.theme.ButtonsGreen
+import com.example.fittracker.ui.theme.DarkGreen
+import com.example.fittracker.ui.theme.LightGreen
+import com.google.firebase.auth.userProfileChangeRequest
 
 @Composable
 
-fun RegisterScreen(onNavigateToLogin: () -> Unit) { //function doesnt take anything and returns Unit (void)
+fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anything and returns Unit (void)
     var email by remember { mutableStateOf("") } // mutableStateOf wraps the initial value ("" here, so like a blank paper) into MutableState
     // remember allows to remember this state
     var password by remember { mutableStateOf("") }
@@ -43,7 +49,9 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) { //function doesnt take anyth
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(10.dp)
+            .background(Brush.verticalGradient(
+                colors = listOf(LightGreen, DarkGreen))),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ){
@@ -149,10 +157,18 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) { //function doesnt take anyth
 
                         if (cleanName.isNotEmpty() && cleanEmail.isNotEmpty() && cleanPassword.isNotEmpty()) {
                             auth.createUserWithEmailAndPassword(cleanEmail, cleanPassword)
-                                .addOnCompleteListener{ task -> //task is an asynchronous object
+                                .addOnCompleteListener{ task -> //task is an asynchronous object, so we call next things only AFTER executing the task in firebase
                                     if (task.isSuccessful) {
-                                        Toast.makeText(context, "Successfully registered!", Toast.LENGTH_SHORT).show()
-                                        onNavigateToLogin()
+                                        val user = auth.currentUser //object of just created user
+                                        val profileUpdates = userProfileChangeRequest { displayName = cleanName } //create profileUpdate object with changes
+
+                                        user?.updateProfile(profileUpdates) //send a request to update profile of this user with profileUpdates object containing a request to name the user "cleanName"
+                                            ?.addOnCompleteListener { updateTask ->
+                                                if (updateTask.isSuccessful){
+                                                    Toast.makeText(context, "Successfully registered!", Toast.LENGTH_SHORT).show()
+                                                    onNavigate("login")
+                                                }
+                                            }
                                     }
                                     else {
                                         val errorText = task.exception?.localizedMessage ?: "An unknown error occurred"//localized message gives human readable reason for error
@@ -172,10 +188,11 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) { //function doesnt take anyth
                 Text(
                     text = "Already have an account?",
                     modifier = Modifier
-                        .clickable { onNavigateToLogin() },
+                        .clickable { onNavigate("login") },
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Left
+                    textAlign = TextAlign.Left,
+                    color = ButtonsGreen
                 )
             }
         }

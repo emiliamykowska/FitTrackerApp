@@ -30,12 +30,15 @@ import com.google.firebase.auth.auth
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Brush
+import com.example.fittracker.ui.theme.ButtonsGreen
+import com.example.fittracker.ui.theme.DarkGreen
+import com.example.fittracker.ui.theme.LightGreen
 import kotlin.text.trim
 
 
 @Composable
-
-fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToHome: () -> Unit) {
+fun LoginScreen(onNavigate: (String) -> Unit) {
     var email by remember { mutableStateOf("") } // mutableStateOf wraps the initial value ("" here, so like a blank paper) into MutableState
     // remember allows to remember this state
     var password by remember { mutableStateOf("") }
@@ -46,7 +49,9 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToHome: () -> Unit) 
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(10.dp)
+            .background(Brush.verticalGradient(
+                colors = listOf(LightGreen, DarkGreen))),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ){
@@ -136,7 +141,7 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToHome: () -> Unit) 
                             auth.signInWithEmailAndPassword(cleanEmail, password)
                                 .addOnCompleteListener {
                                     task -> if (task.isSuccessful) {
-                                        onNavigateToHome()
+                                        onNavigate("home")
                                     } else {
                                         val errorText = task.exception?.localizedMessage ?: "Unknown error occurred"
                                         Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
@@ -150,10 +155,11 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToHome: () -> Unit) 
                 Text(
                     text = "Don't have an account yet?",
                     modifier = Modifier
-                        .clickable{onNavigateToRegister()},
+                        .clickable{onNavigate("register")},
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Left
+                    textAlign = TextAlign.Left,
+                    color = ButtonsGreen
                 )
             }
         }
