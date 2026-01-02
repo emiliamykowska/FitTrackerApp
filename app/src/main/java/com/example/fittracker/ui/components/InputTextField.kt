@@ -1,7 +1,6 @@
 package com.example.fittracker.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
@@ -23,7 +22,8 @@ fun InputTextField(
     onValueChange: (String) -> Unit = {}, // function to update the value, unit means it doesn't return anything
     label: String = "",// a hint for a user what to enter
     fontSize: TextUnit = 16.sp,
-    isPassword: Boolean = false
+    isPassword: Boolean = false,
+    keyboardType: KeyboardType = KeyboardType.Text // text by default
 ) {
     OutlinedTextField(
         value = value,
@@ -35,7 +35,7 @@ fun InputTextField(
         textStyle = TextStyle(fontSize = fontSize),
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         // to hide the password
-        keyboardOptions = KeyboardOptions(keyboardType = if (isPassword) KeyboardType.Password else KeyboardType.Text)
+        keyboardOptions = KeyboardOptions(keyboardType = if (isPassword) KeyboardType.Password else keyboardType)
         // to not show the hints when typing the password
     )
 }
