@@ -7,18 +7,25 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.fittracker.ui.theme.ButtonsGreen
 
 @Composable
 fun RoundedButton(
+    modifier: Modifier = Modifier,
     text: String = "",
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    enabled: Boolean = false,
 ){
-    Button(onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
+    Button(
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick,
+        enabled = enabled,
         shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = ButtonsGreen)
+        colors = ButtonDefaults.buttonColors(
+            containerColor = ButtonsGreen,
+            disabledContentColor = Color.LightGray)
     ){
         Text(text)
     }
