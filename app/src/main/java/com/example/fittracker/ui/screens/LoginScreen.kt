@@ -39,6 +39,7 @@ import kotlin.text.trim
 
 @Composable
 fun LoginScreen(onNavigate: (String) -> Unit) {
+    // dont have to provide a string when calling a function, it will be defined when user clicks some button
     var email by remember { mutableStateOf("") } // mutableStateOf wraps the initial value ("" here, so like a blank paper) into MutableState
     // remember allows to remember this state
     var password by remember { mutableStateOf("") }
