@@ -35,29 +35,21 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
         modifier = Modifier
             .fillMaxSize()
             .padding(15.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ){
-        item {
-            Text(
-            text = "Add Activity:",
-            fontSize = 18.sp
-        )}
-
-        item { Spacer(modifier = Modifier.height(10.dp)) }
 
         item {
             Text(
-            text = "Activity Type",
+            text = "Choose Activity Type:",
             fontSize = 16.sp
         )}
 
-        item{ Spacer(modifier = Modifier.height(10.dp)) }
 
         items(activitiesList.chunked(2)){ //divides elements into pairs and puts these pairs alternately inside 4 lists (coz 8 elements)
             rowActivities ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             rowActivities.forEach {activity ->
                 ActivityCard(
@@ -70,13 +62,16 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
             }
         }}
 
-        item{Spacer(modifier = Modifier.height(10.dp))}
+        item{Text(
+            text = "Choose Activity Duration:",
+            fontSize = 16.sp
+        )}
 
         items(durationList.chunked(3)){
             rowDurations ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             rowDurations.forEach {time ->
                 ActivityCard(
@@ -92,28 +87,25 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
             }
         }}
 
-        item{Text(
-            text = "Duration (minutes)",
-            fontSize = 16.sp
-        )}
 
-        item{Spacer(modifier = Modifier.height(10.dp))}
 
         item { InputTextField(
             value = customDuration,
-            onValueChange = {if (it.all {char -> char.isDigit()}) {
-                    customDuration = it
+            onValueChange = { input ->
+                if (input.all { it.isDigit() } && input.length <= 3) {
+                    customDuration = input
                     selectedDuration = null
-            }},
-            label = "Custom duration",
+                }},
+            label = "Custom duration (1 - 999 minutes)",
             keyboardType = KeyboardType.Number
         )}
 
         item{
+            val isCustomDurationValid = customDuration.isNotEmpty() && (customDuration.toIntOrNull() ?: 0) > 0
             RoundedButton(
                 text = "Add activity",
                 onClick = {},
-                enabled = selectedActivity != null && (selectedDuration != null || customDuration.isNotEmpty()))
+                enabled = selectedActivity != null && (selectedDuration != null || isCustomDurationValid))
         }
     }
 }

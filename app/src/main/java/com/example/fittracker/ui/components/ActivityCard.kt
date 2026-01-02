@@ -35,7 +35,7 @@ fun ActivityCard(
         shape = RoundedCornerShape(15.dp),
         border = BorderStroke(1.dp, if(isSelected) ButtonsGreen else Color.Gray),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) ButtonsGreen.copy(alpha = 0.1f) else Color.White
+            containerColor = if (isSelected) ButtonsGreen.copy(alpha = 0.2f) else Color.White
         )
     ){
         Column(

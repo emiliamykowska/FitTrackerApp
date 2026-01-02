@@ -84,17 +84,17 @@ fun BottomAppBar(
                     )
                 )
             }
-        if (currentScreen == "home"){
-            FloatingActionButton(
-                onClick = { onNavigate("addActivity") },
-                containerColor = ButtonsGreen,
-                shape = CircleShape
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add",
-                    tint = Color.White) //so the plus is white
-            }
+
+        FloatingActionButton(
+            onClick = { onNavigate("addActivity") },
+            containerColor = ButtonsGreen,
+            shape = CircleShape
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add",
+                tint = Color.White) //so the plus is white
         }
+
     }
 }
