@@ -150,35 +150,32 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
 
                 RoundedButton(
                     text="Create Account",
+                    enabled = name.trim().isNotEmpty() && email.trim().isNotEmpty() && password.trim().isNotEmpty(),
                     onClick = {
                         val cleanEmail = email.trim()
                         val cleanPassword = password.trim()
                         val cleanName = name.trim()
 
-                        if (cleanName.isNotEmpty() && cleanEmail.isNotEmpty() && cleanPassword.isNotEmpty()) {
-                            auth.createUserWithEmailAndPassword(cleanEmail, cleanPassword)
-                                .addOnCompleteListener{ task -> //task is an asynchronous object, so we call next things only AFTER executing the task in firebase
-                                    if (task.isSuccessful) {
-                                        val user = auth.currentUser //object of just created user
-                                        val profileUpdates = userProfileChangeRequest { displayName = cleanName } //create profileUpdate object with changes
+                        auth.createUserWithEmailAndPassword(cleanEmail, cleanPassword)
+                            .addOnCompleteListener{ task -> //task is an asynchronous object, so we call next things only AFTER executing the task in firebase
+                                if (task.isSuccessful) {
+                                    val user = auth.currentUser //object of just created user
+                                    val profileUpdates = userProfileChangeRequest { displayName = cleanName } //create profileUpdate object with changes
 
-                                        user?.updateProfile(profileUpdates) //send a request to update profile of this user with profileUpdates object containing a request to name the user "cleanName"
-                                            ?.addOnCompleteListener { updateTask ->
-                                                if (updateTask.isSuccessful){
-                                                    Toast.makeText(context, "Successfully registered!", Toast.LENGTH_SHORT).show()
-                                                    onNavigate("login")
-                                                }
+                                    user?.updateProfile(profileUpdates) //send a request to update profile of this user with profileUpdates object containing a request to name the user "cleanName"
+                                        ?.addOnCompleteListener { updateTask ->
+                                            if (updateTask.isSuccessful){
+                                                Toast.makeText(context, "Successfully registered!", Toast.LENGTH_SHORT).show()
+                                                onNavigate("login")
                                             }
-                                    }
-                                    else {
-                                        val errorText = task.exception?.localizedMessage ?: "An unknown error occurred"//localized message gives human readable reason for error
-                                        Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
-                                    }
+                                        }
+                                }
+                                else {
+                                    val errorText = task.exception?.localizedMessage ?: "An unknown error occurred"//localized message gives human readable reason for error
+                                    Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
                                 }
                             }
-                        else {
-                            Toast.makeText(context, "Fields cannot be empty!", Toast.LENGTH_LONG).show()
-                        }
+
                     }
                 )
 

@@ -135,21 +135,21 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
                 Spacer(modifier = Modifier.height(10.dp))
                 RoundedButton(
                     text="Sign In",
+                    enabled = email.trim().isNotEmpty() && password.trim().isNotEmpty(),
                     onClick = {
                         val cleanEmail = email.trim()
-
-                        if (cleanEmail.isNotEmpty() && password.isNotEmpty()){
-                            auth.signInWithEmailAndPassword(cleanEmail, password)
-                                .addOnCompleteListener {
-                                    task -> if (task.isSuccessful) {
-                                        onNavigate("home")
-                                    } else {
-                                        val errorText = task.exception?.localizedMessage ?: "Unknown error occurred"
-                                        Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
-                                    }
+                        val cleanPassword = password.trim()
+                        auth.signInWithEmailAndPassword(cleanEmail, cleanPassword)
+                            .addOnCompleteListener {
+                                task -> if (task.isSuccessful) {
+                                    onNavigate("home")
+                                } else {
+                                    val errorText = task.exception?.localizedMessage ?: "Unknown error occurred"
+                                    Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
                                 }
-                        }
-                    })
+                            }
+                    }
+                )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
