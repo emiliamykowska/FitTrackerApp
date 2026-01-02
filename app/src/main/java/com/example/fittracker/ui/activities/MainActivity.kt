@@ -75,21 +75,6 @@ class MainActivity: ComponentActivity(){
                                 onNavigate = { route -> navController.navigate(route)})
                         }
                     },
-                    floatingActionButton = {
-                        if (currentRoute == "home"){
-                            FloatingActionButton(
-                                onClick = { navController.navigate("addActivity") },
-                                containerColor = ButtonsGreen,
-                                shape = CircleShape
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Add",
-                                    tint = Color.White)
-                            }
-                        }
-                    },
-                    floatingActionButtonPosition = FabPosition.Center
                 ){ innerPadding -> //innerPadding is used so the content of the screen is shown between header and appbar, not under them
                     Box(modifier = Modifier
                         .fillMaxSize()
