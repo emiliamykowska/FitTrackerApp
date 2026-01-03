@@ -78,7 +78,10 @@ fun HistoryScreen(onNavigate: (String) -> Unit){
             )
         }
 
-        items(items = allActivities){ activity ->
+        items(
+            items = allActivities,
+            key = { it.id } //by default lazyColumn uses index to differentiate between items, now it uses id
+        ){ activity ->
             HistoryActivityCard(
                 activityName = activity.activityName,
                 duration = activity.duration,
@@ -104,19 +107,21 @@ fun HistoryScreen(onNavigate: (String) -> Unit){
 
 
     if (activityToDelete != null && showDeleteAlert){
+        val idToDelete = activityToDelete!!.id
         AlertDialog(
             onDismissRequest = { showDeleteAlert = false },
             title = {Text(text = "Delete activity")},
             text = {Text(text = "Are you sure you want to delete this activity?")},
             confirmButton = {TextButton(onClick = {
                 db.collection("activities")
-                    .document(activityToDelete!!.id)
+                    .document(idToDelete)
                     .delete() //document gets an entry from collection with specified path (here activity.id)
                     .addOnSuccessListener { Toast.makeText(context, "Activity was successfully deleted", Toast.LENGTH_SHORT).show() }
                     .addOnFailureListener { exception ->
                     Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()}
 
                 showDeleteAlert = false
+                allActivities = allActivities.filter { it.id != idToDelete }
                     }
             ) {
                     Text(

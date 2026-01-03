@@ -38,7 +38,7 @@ fun HomeScreen(onNavigate: (String) -> Unit) {
 
     var recentActivities by remember { mutableStateOf<List<ActivityEntry>>(emptyList()) }
 
-    LaunchedEffect(currentUser) {
+    LaunchedEffect(currentUser) { //it's used only once, when the homeScreen is loaded, so it doesn't take a lot of memory
         if (currentUser != null) {
             db.collection("activities")
                 .whereEqualTo("userId", currentUser.uid) //take activities with field userId = currentUSer.uid
@@ -46,7 +46,7 @@ fun HomeScreen(onNavigate: (String) -> Unit) {
                 .limit(4)
                 .addSnapshotListener { snapshot, error -> // listen for changes in firebase
                     if (error != null) {
-                        return@addSnapshotListener
+                        return@addSnapshotListener // stops execution of this update if an error occurred
                     }
 
                     if (snapshot != null){ //if is not null that means that collection("activities") was changed f.e. new activity added
