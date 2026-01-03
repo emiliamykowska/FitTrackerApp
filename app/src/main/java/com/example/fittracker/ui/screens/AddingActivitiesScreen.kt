@@ -1,11 +1,10 @@
 package com.example.fittracker.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,20 +15,31 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fittracker.data.ActivityEntry
 import com.example.fittracker.data.activitiesList
 import com.example.fittracker.data.durationList
 import com.example.fittracker.ui.components.ActivityCard
 import com.example.fittracker.ui.components.InputTextField
 import com.example.fittracker.ui.components.RoundedButton
+import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
     var selectedActivity by remember { mutableStateOf<String?>(null) }
     var selectedDuration by remember { mutableStateOf<Int?>(null) }
     var customDuration by remember { mutableStateOf("")} // "" coz can't be null for inputTextField
+
+    val db = FirebaseFirestore.getInstance() //connecting with firebase database
+    val auth = Firebase.auth
+    val context = LocalContext.current
 
     LazyColumn(
         modifier = Modifier
@@ -41,7 +51,7 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
         item {
             Text(
             text = "Choose Activity Type:",
-            fontSize = 16.sp
+            fontSize = 16.sp, fontWeight = FontWeight.SemiBold
         )}
 
 
@@ -64,7 +74,8 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
 
         item{Text(
             text = "Choose Activity Duration:",
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold
         )}
 
         items(durationList.chunked(3)){
@@ -87,8 +98,6 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
             }
         }}
 
-
-
         item { InputTextField(
             value = customDuration,
             onValueChange = { input ->
@@ -104,8 +113,36 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
             val isCustomDurationValid = customDuration.isNotEmpty() && (customDuration.toIntOrNull() ?: 0) > 0
             RoundedButton(
                 text = "Add activity",
-                onClick = {},
-                enabled = selectedActivity != null && (selectedDuration != null || isCustomDurationValid))
+                enabled = selectedActivity != null && (selectedDuration != null || isCustomDurationValid),
+                onClick = {
+                    val currentUser = auth.currentUser
+
+                    if (currentUser != null){
+                        val duration: Int = selectedDuration ?: (customDuration.toIntOrNull() ?: 0)
+                        val selectedEmoji = activitiesList.find {it.name == selectedActivity}?.emoji ?: "❓"
+                        val activityName: String = selectedActivity!! // !! means it for sure is not null, so changes String? to String here
+
+                        val activityEntry = ActivityEntry(
+                            activityName,
+                            selectedEmoji,
+                            duration,
+                            Timestamp.now(),
+                            currentUser.uid
+                        )
+
+                        db.collection("activities")
+                            .add(activityEntry)
+                            .addOnSuccessListener {
+                                onNavigate("home")
+                                Toast.makeText(context, "Activity was successfully added!", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener { exception ->
+                                val errorText = exception.localizedMessage ?: "Unknown error occurred"
+                                Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
+                            }
+                    }
+                }
+            )
         }
     }
 }
