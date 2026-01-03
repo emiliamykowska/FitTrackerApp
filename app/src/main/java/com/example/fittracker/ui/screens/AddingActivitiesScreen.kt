@@ -123,11 +123,11 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
                         val activityName: String = selectedActivity!! // !! means it for sure is not null, so changes String? to String here
 
                         val activityEntry = ActivityEntry(
-                            activityName,
-                            selectedEmoji,
-                            duration,
-                            Timestamp.now(),
-                            currentUser.uid
+                            activityName = activityName,
+                            emoji = selectedEmoji,
+                            duration = duration,
+                            date = Timestamp.now(),
+                            userId = currentUser.uid
                         )
 
                         db.collection("activities")

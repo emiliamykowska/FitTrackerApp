@@ -30,6 +30,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.graphics.Brush
 import com.example.fittracker.ui.theme.ButtonsGreen
 import com.example.fittracker.ui.theme.DarkGreen
@@ -47,10 +49,13 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
     val auth = Firebase.auth // firebase initialization
     val context = LocalContext.current // same as this@RegisterActivity, but that does not exist in compose
 
+    val scrollState = rememberScrollState()
+
     Column (
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
+            .verticalScroll(scrollState)
             .background(Brush.verticalGradient(
                 colors = listOf(LightGreen, DarkGreen))),
         horizontalAlignment = Alignment.CenterHorizontally,

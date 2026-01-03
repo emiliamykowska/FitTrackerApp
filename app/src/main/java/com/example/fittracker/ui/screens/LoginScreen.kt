@@ -28,6 +28,8 @@ import com.example.fittracker.ui.components.Logo
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import android.widget.Toast
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Brush
@@ -47,11 +49,14 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
     val auth = Firebase.auth //authentication
     val context = LocalContext.current
 
+    val scrollState = rememberScrollState()
+
 
     Column (
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
+            .verticalScroll(scrollState)
             .background(Brush.verticalGradient(
                 colors = listOf(LightGreen, DarkGreen))),
         horizontalAlignment = Alignment.CenterHorizontally,
