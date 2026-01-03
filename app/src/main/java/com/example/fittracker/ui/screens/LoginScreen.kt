@@ -35,6 +35,7 @@ import com.example.fittracker.ui.theme.ButtonsGreen
 import com.example.fittracker.ui.theme.DarkGreen
 import com.example.fittracker.ui.theme.LightGreen
 import kotlin.text.trim
+import androidx.compose.ui.platform.LocalContext
 
 
 @Composable
@@ -43,8 +44,8 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
     var email by remember { mutableStateOf("") } // mutableStateOf wraps the initial value ("" here, so like a blank paper) into MutableState
     // remember allows to remember this state
     var password by remember { mutableStateOf("") }
-    val auth = Firebase.auth
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val auth = Firebase.auth //authentication
+    val context = LocalContext.current
 
 
     Column (

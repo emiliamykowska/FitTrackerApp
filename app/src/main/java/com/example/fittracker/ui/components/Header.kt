@@ -39,11 +39,11 @@ fun Header(
             .wrapContentHeight() //adjusting height to different components
             .background(brush = Brush.verticalGradient(listOf(LightGreen, DarkGreen)),
                 shape = RoundedCornerShape(bottomEnd = 15.dp, bottomStart = 15.dp))
-            .padding(15.dp)
+            .padding(10.dp)
 
     ){
         Column(
-        verticalArrangement =  Arrangement.spacedBy(10.dp)
+        verticalArrangement =  Arrangement.spacedBy(8.dp)
         ){
             Row(
                 modifier = Modifier.fillMaxWidth(),

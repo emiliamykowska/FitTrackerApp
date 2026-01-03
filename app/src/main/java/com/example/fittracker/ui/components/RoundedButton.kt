@@ -16,12 +16,12 @@ fun RoundedButton(
     modifier: Modifier = Modifier,
     text: String = "",
     onClick: () -> Unit = {},
-    enabled: Boolean = false,
+    enabled: Boolean = true,
 ){
     Button(
         modifier = modifier.fillMaxWidth(),
-        onClick = onClick,
         enabled = enabled,
+        onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = ButtonsGreen,

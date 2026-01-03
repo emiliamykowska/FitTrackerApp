@@ -35,6 +35,7 @@ import com.example.fittracker.ui.theme.ButtonsGreen
 import com.example.fittracker.ui.theme.DarkGreen
 import com.example.fittracker.ui.theme.LightGreen
 import com.google.firebase.auth.userProfileChangeRequest
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 
@@ -44,7 +45,7 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     val auth = Firebase.auth // firebase initialization
-    val context = androidx.compose.ui.platform.LocalContext.current // same as this@RegisterActivity, but that does not exist in compose
+    val context = LocalContext.current // same as this@RegisterActivity, but that does not exist in compose
 
     Column (
         modifier = Modifier

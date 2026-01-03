@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,14 +28,13 @@ fun HeaderStatCard(
     modifier: Modifier = Modifier){
 
     Card(
-        modifier = modifier.height(65.dp),
+        modifier = modifier.wrapContentHeight(),
         shape = RoundedCornerShape(15.dp),
         colors = CardDefaults.cardColors(Color.White.copy(alpha = 0.2f)) // for card to be partially transparent
     ){
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
         ){
             Text(
                 text = value,
@@ -47,10 +47,9 @@ fun HeaderStatCard(
                 text = label,
                 color = Color.White,
                 fontWeight = FontWeight.Thin,
-                fontSize = 11.sp,
+                fontSize = 10.sp,
                 textAlign = TextAlign.Center // text alignment to the center
             )
-
         }
     }
 }
