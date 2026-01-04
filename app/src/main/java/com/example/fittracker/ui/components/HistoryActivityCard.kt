@@ -5,9 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,7 +34,7 @@ fun HistoryActivityCard(
     timestamp: Timestamp,
     onDelete: () -> Unit
 ){
-    val sdf = remember { SimpleDateFormat("MMM d, yyyy h:mm a", Locale.getDefault()) } //Locale.getDefault gives users country name of months fe
+    val sdf = remember { SimpleDateFormat("MMM d, yyyy h:mm a", Locale.ENGLISH) } //Locale.english so name of months is in english
     val formattedDate = sdf.format(timestamp.toDate()) //change timestamp to date and then format
 
     Card(

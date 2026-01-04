@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,10 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fittracker.data.ActivityEntry
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
@@ -32,33 +28,15 @@ import com.example.fittracker.ui.components.HistoryActivityCard
 
 
 @Composable
-fun HistoryScreen(onNavigate: (String) -> Unit){
+fun HistoryScreen(
+    onNavigate: (String) -> Unit,
+    allActivities: List<ActivityEntry>
+){
     val db = FirebaseFirestore.getInstance()
-    val auth = Firebase.auth
-    val currentUser = auth.currentUser
-
-    var allActivities by remember { mutableStateOf<List<ActivityEntry>>(emptyList()) }
 
     var showDeleteAlert by remember { mutableStateOf(false) }
     var activityToDelete by remember { mutableStateOf<ActivityEntry?>(null) }
     val context = LocalContext.current
-
-    LaunchedEffect(currentUser) {
-        if (currentUser != null) {
-            db.collection("activities")
-                .whereEqualTo("userId", currentUser.uid) //take activities with field userId = currentUSer.uid
-                .orderBy("date", Query.Direction.DESCENDING)
-                .addSnapshotListener { snapshot, error -> // listen for changes in firebase
-                    if (error != null) {
-                        return@addSnapshotListener
-                    }
-
-                    if (snapshot != null){ //if is not null that means that collection("activities") was changed f.e. new activity added
-                        allActivities = snapshot.toObjects(ActivityEntry::class.java)} //to objects change json from firestore into ActivityEntry
-                    //Use ActivityEntry class but since firebase is in java, it's kotlin structure has to be changes into class.java
-                }
-        }
-    }
 
     LazyColumn(
         modifier = Modifier
@@ -121,7 +99,7 @@ fun HistoryScreen(onNavigate: (String) -> Unit){
                     Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()}
 
                 showDeleteAlert = false
-                allActivities = allActivities.filter { it.id != idToDelete }
+//                allActivities = allActivities.filter { it.id != idToDelete }
                     }
             ) {
                     Text(

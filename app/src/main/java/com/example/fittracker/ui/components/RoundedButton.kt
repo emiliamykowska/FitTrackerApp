@@ -25,7 +25,9 @@ fun RoundedButton(
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = ButtonsGreen,
-            disabledContentColor = Color.LightGray)
+            contentColor = Color.White,
+            disabledContainerColor = Color.LightGray,
+            disabledContentColor = Color.Gray)
     ){
         Text(text)
     }

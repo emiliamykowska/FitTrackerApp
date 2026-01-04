@@ -55,16 +55,15 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
             .verticalScroll(scrollState)
             .background(Brush.verticalGradient(
                 colors = listOf(LightGreen, DarkGreen))),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ){
-        Logo()
+        Spacer(modifier = Modifier.height(15.dp))
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Logo()
 
         Text(
             text = "FitTracker",
@@ -74,8 +73,6 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
-
         Text(
             text = "Track your fitness journey",
             color = Color.White,
@@ -84,7 +81,7 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         Card (
             shape = RoundedCornerShape(
@@ -97,7 +94,8 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ){
                 Text(
                     text = "Welcome Back!",
@@ -105,8 +103,6 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Left)
-
-                Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
                     text = "Email",
@@ -121,8 +117,6 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
                     label = "you@example.com"
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
-
                 Text(
                     text = "Password",
                     modifier = Modifier.fillMaxWidth(),
@@ -134,11 +128,10 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
                 InputTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = "*****",
+                    label = "password",
                     isPassword = true
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
                 RoundedButton(
                     text="Sign In",
                     enabled = email.trim().isNotEmpty() && password.trim().isNotEmpty(),
@@ -157,14 +150,12 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
                     }
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
-
                 Text(
                     text = "Don't have an account yet?",
                     modifier = Modifier
                         .clickable{onNavigate("register")},
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Left,
                     color = ButtonsGreen
                 )

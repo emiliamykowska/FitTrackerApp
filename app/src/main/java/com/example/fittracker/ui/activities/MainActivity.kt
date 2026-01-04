@@ -3,24 +3,21 @@ package com.example.fittracker.ui.activities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.fittracker.data.ActivityEntry
 import com.example.fittracker.ui.components.BottomAppBar
 import com.example.fittracker.ui.components.Header
 import com.example.fittracker.ui.screens.AddingActivitiesScreen
@@ -30,10 +27,11 @@ import com.example.fittracker.ui.screens.LoginScreen
 import com.example.fittracker.ui.screens.ProfileScreen
 import com.example.fittracker.ui.screens.RegisterScreen
 import com.example.fittracker.ui.screens.StatisticsScreen
-import com.example.fittracker.ui.theme.ButtonsGreen
 import com.example.fittracker.ui.theme.FitTrackerTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class MainActivity: ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?){ // the function is called once, when app is launched
@@ -42,15 +40,18 @@ class MainActivity: ComponentActivity(){
         super.onCreate(savedInstanceState)
         // before doing things below call parent onCreate
 
-        val user = Firebase.auth.currentUser
+               setContent { // tells to use jetpackcompose, not xml
 
-        setContent { // tells to use jetpackcompose, not xml
             FitTrackerTheme {
 //                var currentScreen by remember { mutableStateOf(if (user != null) "home" else "login") } //create state that remembers which screen is shown, login at first
                 // mutablestateof does recompososition, so if it's changed the screen is refreshed
                 // remember so the state states there after each micro refresh
                 // currentscreen is of type MutableState<String>, so there is by so .value dont have to be used
                 // by is a "delegat"
+
+                var user by remember { mutableStateOf(Firebase.auth.currentUser) }
+                var allActivities by remember {mutableStateOf<List<ActivityEntry>>(emptyList())}
+                val db = FirebaseFirestore.getInstance()
 
                 val navController = rememberNavController()
                 // navController controlls which screen user is in, the history of screens and the destination
@@ -62,6 +63,31 @@ class MainActivity: ComponentActivity(){
                 val currentRoute = navBackStackEntry?.destination?.route
                 //navBackStackEntry is the screen the user sees right now, .destination to see where this entry leads to (navDestination object), .route is the string name of this destination
                 val shouldShowHeaderAndBar = currentRoute != "login" && currentRoute != "register"
+
+                LaunchedEffect(Unit) { //change user state if was logged in
+                    Firebase.auth.addAuthStateListener { auth ->
+                        user = auth.currentUser
+                    }
+                }
+
+                LaunchedEffect(user) {
+                    val currentUser = user
+
+                    if (currentUser != null) {
+                        db.collection("activities")
+                            .whereEqualTo("userId", currentUser.uid) //take activities with field userId = currentUSer.uid
+                            .orderBy("date", Query.Direction.DESCENDING)
+                            .addSnapshotListener { snapshot, error -> // listen for changes in firebase
+                                if (error != null) {
+                                    return@addSnapshotListener
+                                }
+
+                                if (snapshot != null){ //if is not null that means that collection("activities") was changed f.e. new activity added
+                                    allActivities = snapshot.toObjects(ActivityEntry::class.java)} //to objects change json from firestore into ActivityEntry
+                                //Use ActivityEntry class but since firebase is in java, it's kotlin structure has to be changes into class.java
+                            }
+                    }
+                }
 
                 Scaffold(
                     topBar = {
@@ -94,10 +120,16 @@ class MainActivity: ComponentActivity(){
                                 RegisterScreen(onNavigate = { route -> navController.navigate(route) })
                             }
                             composable("home"){
-                                HomeScreen(onNavigate = { route -> navController.navigate(route) })
+                                HomeScreen(
+                                    onNavigate = { route -> navController.navigate(route) },
+                                    allActivities = allActivities
+                                )
                             }
                             composable("history"){
-                                HistoryScreen(onNavigate = { route -> navController.navigate(route) })
+                                HistoryScreen(
+                                    onNavigate = { route -> navController.navigate(route) },
+                                    allActivities = allActivities
+                                )
                             }
                             composable("profile"){
                                 ProfileScreen(
@@ -105,7 +137,8 @@ class MainActivity: ComponentActivity(){
                                     onLogout = {
                                         Firebase.auth.signOut()
                                         navController.navigate("login") {popUpTo("home") {inclusive = true} } //go to login and pop whole history till home (from top to bottom) as it is always first screen if logged in, including home so can't login again by using back arrow
-                                    }
+                                    },
+                                    allActivities = allActivities
                                 )
                             }
                             composable("statistics"){

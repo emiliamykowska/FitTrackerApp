@@ -54,13 +54,15 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
             .verticalScroll(scrollState)
             .background(Brush.verticalGradient(
                 colors = listOf(LightGreen, DarkGreen))),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ){
+
+        Spacer(modifier = Modifier.height(15.dp))
+
         Logo()
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -73,8 +75,6 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
-
         Text(
             text = "Track your fitness journey",
             color = Color.White,
@@ -83,7 +83,7 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         Card (
             shape = RoundedCornerShape(
@@ -96,7 +96,8 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ){
                 Text(
                     text = "Create Account",
@@ -104,8 +105,6 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Left)
-
-                Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
                     text = "Name",
@@ -120,8 +119,6 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
                     label = "John Doe"
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
-
                 Text(
                     text = "Email",
                     modifier = Modifier.fillMaxWidth(),
@@ -135,8 +132,6 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
                     label = "you@example.com"
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
-
                 Text(
                     text = "Password",
                     modifier = Modifier.fillMaxWidth(),
@@ -148,11 +143,9 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
                 InputTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = "*****",
+                    label = "password",
                     isPassword = true
                 )
-
-                Spacer(modifier = Modifier.height(10.dp))
 
                 RoundedButton(
                     text="Create Account",
@@ -186,14 +179,12 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
                 )
 
 
-                Spacer(modifier = Modifier.height(10.dp))
-
                 Text(
                     text = "Already have an account?",
                     modifier = Modifier
                         .clickable { onNavigate("login") },
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Left,
                     color = ButtonsGreen
                 )

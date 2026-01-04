@@ -37,7 +37,8 @@ fun Header(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight() //adjusting height to different components
-            .background(brush = Brush.verticalGradient(listOf(LightGreen, DarkGreen)),
+            .background(
+                brush = Brush.horizontalGradient(listOf(LightGreen, DarkGreen)),
                 shape = RoundedCornerShape(bottomEnd = 15.dp, bottomStart = 15.dp))
             .padding(10.dp)
 
