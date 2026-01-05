@@ -116,27 +116,27 @@ fun ProfileScreen(
                         .background(
                             brush = Brush.horizontalGradient(listOf(LightGreen, DarkGreen)),
                             shape = RoundedCornerShape(15.dp))
-                        .padding(7.dp),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                        .padding(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
 
                     Text(
                         text = "Favourite activity",
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
 
                     Text(
                         text = favouriteActivity.key,
-                        fontSize = 15.sp,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
 
                     Text(
                         text = "${favouriteActivity.value.size} sessions completed",
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         color = Color.White
                     )
                 }

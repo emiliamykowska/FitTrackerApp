@@ -26,20 +26,26 @@ import com.example.fittracker.ui.theme.DarkGreen
 import com.example.fittracker.ui.theme.LightGreen
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
+import com.example.fittracker.data.ActivityEntry
 import com.google.firebase.auth.FirebaseUser
 
 @Composable
 fun Header(
     user: FirebaseUser?,
-    hasActivities: Boolean
+    showActivities: Boolean,
+    activitiesThisWeek: List<ActivityEntry> = emptyList()
 ){
+    val totalTimeThisWeek = activitiesThisWeek.sumOf {it.duration} / 60.0
+    val favouriteActivityThisWeek = (activitiesThisWeek.maxByOrNull { it.activityName })?.activityName
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight() //adjusting height to different components
             .background(
                 brush = Brush.horizontalGradient(listOf(LightGreen, DarkGreen)),
-                shape = RoundedCornerShape(bottomEnd = 15.dp, bottomStart = 15.dp))
+                shape = RoundedCornerShape(bottomEnd = 15.dp, bottomStart = 15.dp)
+            )
             .padding(10.dp)
 
     ){
@@ -63,13 +69,15 @@ fun Header(
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Your weekly stats:",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Thin
-                    )
+                    if (showActivities){
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Your weekly stats:",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Thin
+                        )
+                    }
                 }
 
                 Icon(
@@ -80,14 +88,25 @@ fun Header(
                 )
             }
 
-            if (hasActivities){
+            if (showActivities){
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ){
-                    HeaderStatCard(label = "Activities", value = "3", modifier = Modifier.weight(1f)) // for each to take 1/3 of space (each takes 1 part of the parts sum)
-                    HeaderStatCard(label = "Total Time", value = "1.5h", modifier = Modifier.weight(1f))
-                    HeaderStatCard(label = "Favourite Activity", value = "Running", modifier = Modifier.weight(1f))
+                    HeaderStatCard(
+                        label = "Activities",
+                        value = "${activitiesThisWeek.size}",
+                        modifier = Modifier.weight(1f)) // for each to take 1/3 of space (each takes 1 part of the parts sum)
+
+                    HeaderStatCard(
+                        label = "Total Time",
+                        value = "%.1f h".format(totalTimeThisWeek),
+                        modifier = Modifier.weight(1f))
+
+                    HeaderStatCard(
+                        label = "Favourite Activity",
+                        value = favouriteActivityThisWeek ?: "None",
+                        modifier = Modifier.weight(1f))
                 }
             }
         }

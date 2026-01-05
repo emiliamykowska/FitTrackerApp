@@ -6,12 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.fittracker.data.ActivityEntry
 import com.example.fittracker.ui.components.BottomAppBar
 import com.example.fittracker.ui.components.Header
+import com.example.fittracker.ui.components.LoadingBox
 import com.example.fittracker.ui.screens.AddingActivitiesScreen
 import com.example.fittracker.ui.screens.HistoryScreen
 import com.example.fittracker.ui.screens.HomeScreen
@@ -27,11 +30,13 @@ import com.example.fittracker.ui.screens.LoginScreen
 import com.example.fittracker.ui.screens.ProfileScreen
 import com.example.fittracker.ui.screens.RegisterScreen
 import com.example.fittracker.ui.screens.StatisticsScreen
+import com.example.fittracker.ui.theme.ButtonsGreen
 import com.example.fittracker.ui.theme.FitTrackerTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.util.Calendar
 
 class MainActivity: ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?){ // the function is called once, when app is launched
@@ -50,7 +55,7 @@ class MainActivity: ComponentActivity(){
                 // by is a "delegat"
 
                 var user by remember { mutableStateOf(Firebase.auth.currentUser) }
-                var allActivities by remember {mutableStateOf<List<ActivityEntry>>(emptyList())}
+                var allActivities by remember {mutableStateOf<List<ActivityEntry>?>(null)}
                 val db = FirebaseFirestore.getInstance()
 
                 val navController = rememberNavController()
@@ -89,10 +94,35 @@ class MainActivity: ComponentActivity(){
                     }
                 }
 
+                val startOfThisWeekMillis = remember { //calculates it only once, after turning off the app
+                    Calendar.getInstance().apply { //getting the date of now but modifying
+                        set(Calendar.HOUR_OF_DAY, 0) //setting the time to 00:00:00:00, Monday
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                        set(Calendar.DAY_OF_WEEK, Calendar.MONDAY) // coz in USA week starts from sunday it will move 1 day in the future if it's sunday
+                        if (timeInMillis > System.currentTimeMillis()){
+                            add(Calendar.DAY_OF_YEAR, -7) // go back 1 week if it was sunday
+                        }
+                    }.timeInMillis
+                }
+
+                val activitiesThisWeek = remember(allActivities){ //remember to calculate it only when allActivities is changed
+                    allActivities?.filter { it.date.toDate().time >= startOfThisWeekMillis } ?: emptyList()
+                }
+
                 Scaffold(
                     topBar = {
-                        if (shouldShowHeaderAndBar){
-                            Header(user, hasActivities = true)
+                        if (shouldShowHeaderAndBar && currentRoute == "home"){
+                            Header(
+                                user = user,
+                                showActivities = allActivities != null && activitiesThisWeek.isNotEmpty(),
+                                activitiesThisWeek = activitiesThisWeek)
+                        }
+                        else if (shouldShowHeaderAndBar) {
+                            Header(
+                                user = user,
+                                showActivities = false)
                         }
                     },
                     bottomBar = {
@@ -120,29 +150,53 @@ class MainActivity: ComponentActivity(){
                                 RegisterScreen(onNavigate = { route -> navController.navigate(route) })
                             }
                             composable("home"){
-                                HomeScreen(
-                                    onNavigate = { route -> navController.navigate(route) },
-                                    allActivities = allActivities
-                                )
+                                if (allActivities == null){
+                                    LoadingBox()
+                                }
+                                else{
+                                    HomeScreen(
+                                        onNavigate = { route -> navController.navigate(route) },
+                                        allActivities = allActivities!!
+                                    )
+                                }
+
                             }
                             composable("history"){
-                                HistoryScreen(
-                                    onNavigate = { route -> navController.navigate(route) },
-                                    allActivities = allActivities
-                                )
+                                if (allActivities == null){
+                                    LoadingBox()
+                                }
+                                else{
+                                    HistoryScreen(
+                                        onNavigate = { route -> navController.navigate(route) },
+                                        allActivities = allActivities!!
+                                    )
+                                }
+
                             }
                             composable("profile"){
-                                ProfileScreen(
-                                    onNavigate = { route -> navController.navigate(route) },
-                                    onLogout = {
-                                        Firebase.auth.signOut()
-                                        navController.navigate("login") {popUpTo("home") {inclusive = true} } //go to login and pop whole history till home (from top to bottom) as it is always first screen if logged in, including home so can't login again by using back arrow
-                                    },
-                                    allActivities = allActivities
-                                )
+                                if (allActivities == null){
+                                    LoadingBox()
+                                }
+                                else{
+                                    ProfileScreen(
+                                        onNavigate = { route -> navController.navigate(route) },
+                                        onLogout = {
+                                            Firebase.auth.signOut()
+                                            navController.navigate("login") {popUpTo("home") {inclusive = true} } //go to login and pop whole history till home (from top to bottom) as it is always first screen if logged in, including home so can't login again by using back arrow
+                                        },
+                                        allActivities = allActivities!!
+                                    )
+                                }
+
                             }
                             composable("statistics"){
-                                StatisticsScreen(onNavigate = { route -> navController.navigate(route) })
+                                if (allActivities == null){
+                                    LoadingBox()
+                                }
+                                else{
+                                    StatisticsScreen(onNavigate = { route -> navController.navigate(route) })
+                                }
+
                             }
                             composable("addActivity"){
                                 AddingActivitiesScreen(onNavigate = {route -> navController.navigate(route)})

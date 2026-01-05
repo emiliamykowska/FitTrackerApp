@@ -63,7 +63,7 @@ fun HomeScreen(
                 fontSize = 15.sp
             )
         }
-        else{
+        else if (allActivities.size > 4){
             Text(
                 text = "To see all your activities go to history panel",
                 fontWeight = FontWeight.SemiBold,
