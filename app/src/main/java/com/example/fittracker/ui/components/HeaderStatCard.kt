@@ -33,9 +33,12 @@ fun HeaderStatCard(
         colors = CardDefaults.cardColors(Color.White.copy(alpha = 0.2f)) // for card to be partially transparent
     ){
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(2.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-        ){
+            verticalArrangement = Arrangement.Center
+            ){
             Text(
                 text = value,
                 color = Color.White,

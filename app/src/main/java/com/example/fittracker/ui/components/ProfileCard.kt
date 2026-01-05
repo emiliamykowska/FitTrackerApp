@@ -35,7 +35,7 @@ fun ProfileCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(7.dp),
+                .padding(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ){

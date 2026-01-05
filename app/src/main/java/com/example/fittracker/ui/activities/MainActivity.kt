@@ -194,7 +194,9 @@ class MainActivity: ComponentActivity(){
                                     LoadingBox()
                                 }
                                 else{
-                                    StatisticsScreen(onNavigate = { route -> navController.navigate(route) })
+                                    StatisticsScreen(
+                                        onNavigate = { route -> navController.navigate(route) },
+                                        allActivities = allActivities!!)
                                 }
 
                             }
