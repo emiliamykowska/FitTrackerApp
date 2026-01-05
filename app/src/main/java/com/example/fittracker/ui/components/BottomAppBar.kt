@@ -63,6 +63,17 @@ fun BottomAppBar(
                 NavigationBarItem(selected = false, onClick = {}, icon = {}, enabled = false) //space for floating action button
 
                 NavigationBarItem(
+                    selected = currentScreen == "statistics",
+                    onClick = { onNavigate("statistics") },
+                    icon = { Icon(Icons.Default.QueryStats, contentDescription = "Statistics") },
+                    label = { Text("Statistics") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = ButtonsGreen,
+                        selectedTextColor = ButtonsGreen
+                    )
+                )
+
+                NavigationBarItem(
                     selected = currentScreen == "profile",
                     onClick = { onNavigate("profile") },
                     icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
@@ -73,16 +84,6 @@ fun BottomAppBar(
                     )
                 )
 
-                NavigationBarItem(
-                    selected = currentScreen == "statistics",
-                    onClick = { onNavigate("statistics") },
-                    icon = { Icon(Icons.Default.QueryStats, contentDescription = "Statistics") },
-                    label = { Text("Statistics") },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = ButtonsGreen,
-                        selectedTextColor = ButtonsGreen
-                    )
-                )
             }
 
         FloatingActionButton(
