@@ -45,7 +45,7 @@ class MainActivity: ComponentActivity(){
         super.onCreate(savedInstanceState)
         // before doing things below call parent onCreate
 
-               setContent { // tells to use jetpackcompose, not xml
+        setContent { // tells to use jetpackcompose, not xml
 
             FitTrackerTheme {
 //                var currentScreen by remember { mutableStateOf(if (user != null) "home" else "login") } //create state that remembers which screen is shown, login at first
@@ -100,10 +100,7 @@ class MainActivity: ComponentActivity(){
                         set(Calendar.MINUTE, 0)
                         set(Calendar.SECOND, 0)
                         set(Calendar.MILLISECOND, 0)
-                        set(Calendar.DAY_OF_WEEK, Calendar.MONDAY) // coz in USA week starts from sunday it will move 1 day in the future if it's sunday
-                        if (timeInMillis > System.currentTimeMillis()){
-                            add(Calendar.DAY_OF_YEAR, -7) // go back 1 week if it was sunday
-                        }
+                        set(Calendar.DAY_OF_WEEK, firstDayOfWeek) // coz in some countries week starts from sunday and in some from monday
                     }.timeInMillis
                 }
 
