@@ -45,6 +45,7 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
     var email by remember { mutableStateOf("") } // mutableStateOf wraps the initial value ("" here, so like a blank paper) into MutableState
     // remember allows to remember this state
     var password by remember { mutableStateOf("") }
+    var passwordConfirmation by remember {mutableStateOf("")}
     var name by remember { mutableStateOf("") }
     val auth = Firebase.auth // firebase initialization
     val context = LocalContext.current // same as this@RegisterActivity, but that does not exist in compose
@@ -64,8 +65,6 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
         Spacer(modifier = Modifier.height(15.dp))
 
         Logo()
-
-        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = "FitTracker",
@@ -115,7 +114,7 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
 
                 InputTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = { newValue -> name = newValue.filter { it != '\n' } },
                     label = "John Doe"
                 )
 
@@ -128,7 +127,7 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
 
                 InputTextField(
                     value = email, //display email.value
-                    onValueChange = { email = it }, //onValueChange = { newValue -> email.value = newValue }
+                    onValueChange = { newValue -> email = newValue.filter { it != '\n' } }, //onValueChange = { newValue -> email.value = newValue }
                     label = "you@example.com"
                 )
 
@@ -142,38 +141,92 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
 
                 InputTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { newValue -> password = newValue.filter { it != '\n' } },
+                    label = "password",
+                    isPassword = true
+                )
+
+                Text(
+                    text = "Confirm your password",
+                    modifier = Modifier.fillMaxWidth(),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                    textAlign = TextAlign.Left,
+                )
+
+                InputTextField(
+                    value = passwordConfirmation,
+                    onValueChange = { newValue -> passwordConfirmation = newValue.filter { it != '\n' }  },
                     label = "password",
                     isPassword = true
                 )
 
                 RoundedButton(
                     text="Create Account",
-                    enabled = name.trim().isNotEmpty() && email.trim().isNotEmpty() && password.trim().isNotEmpty(),
+                    enabled = name.isNotBlank() && email.isNotBlank() && password.isNotBlank() && passwordConfirmation.isNotBlank(),
                     onClick = {
                         val cleanEmail = email.trim()
                         val cleanPassword = password.trim()
+                        val cleanPasswordConfirmation = passwordConfirmation.trim()
                         val cleanName = name.trim()
 
-                        auth.createUserWithEmailAndPassword(cleanEmail, cleanPassword)
-                            .addOnCompleteListener{ task -> //task is an asynchronous object, so we call next things only AFTER executing the task in firebase
-                                if (task.isSuccessful) {
-                                    val user = auth.currentUser //object of just created user
-                                    val profileUpdates = userProfileChangeRequest { displayName = cleanName } //create profileUpdate object with changes
 
-                                    user?.updateProfile(profileUpdates) //send a request to update profile of this user with profileUpdates object containing a request to name the user "cleanName"
-                                        ?.addOnCompleteListener { updateTask ->
-                                            if (updateTask.isSuccessful){
-                                                Toast.makeText(context, "Successfully registered!", Toast.LENGTH_SHORT).show()
+                        when {
+                            cleanName.length < 2 || cleanName.length > 50 -> {
+                                Toast.makeText(context, "Name should be between 2 and 50 characters", Toast.LENGTH_SHORT).show()
+                            }
+                            !cleanEmail.contains("@") -> {
+                                Toast.makeText(context, "Email has to contain '@'!", Toast.LENGTH_SHORT).show()
+                            }
+                            cleanPassword.length < 6 ->  {
+                                Toast.makeText(context, "Password must contain at least 6 signs!",
+                                    Toast.LENGTH_SHORT).show()
+                            }
+                            !cleanPassword.any { it.isLetter() } -> {
+                                Toast.makeText(context, "Password must contain at least one letter!", Toast.LENGTH_SHORT).show()
+                            }
+                            !cleanPassword.any { it.isDigit() } -> {
+                                Toast.makeText(context, "Password must contain at least one number!", Toast.LENGTH_SHORT).show()
+                            }
+                            cleanPassword != cleanPasswordConfirmation -> {
+                                Toast.makeText(context, "Provided passwords are different!", Toast.LENGTH_SHORT).show()
+                            }
+                        else -> {
+                            auth.createUserWithEmailAndPassword(cleanEmail, cleanPassword)
+                                .addOnCompleteListener { task -> //task is an asynchronous object, so we call next things only AFTER executing the task in firebase
+                                    if (task.isSuccessful) {
+                                        val user = auth.currentUser //object of just created user
+                                        val profileUpdates = userProfileChangeRequest {
+                                            displayName = cleanName
+                                        } //create profileUpdate object with changes
+
+                                        user?.updateProfile(profileUpdates) //send a request to update profile of this user with profileUpdates object containing a request to name the user "cleanName"
+                                            ?.addOnCompleteListener { updateTask ->
+                                                if (updateTask.isSuccessful) {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Successfully registered!",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                } else {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Successfully registered, but there was a problem adding your name",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
                                                 onNavigate("login")
                                             }
-                                        }
+                                    } else {
+                                        val errorText = task.exception?.localizedMessage
+                                            ?: "An unknown error occurred"//localized message gives human readable reason for error
+                                        Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
+                                    }
                                 }
-                                else {
-                                    val errorText = task.exception?.localizedMessage ?: "An unknown error occurred"//localized message gives human readable reason for error
-                                    Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
-                                }
-                            }
+                        }
+                        }
+
+
 
                     }
                 )

@@ -91,14 +91,14 @@ fun StatisticsScreen(
                 when(selectedTimeUnit){
                     TimeUnit.Days -> "dd/MM"
                     TimeUnit.Weeks -> "dd/MM" //date of first day of the week
-                    TimeUnit.Months -> "MMM"
+                    TimeUnit.Months -> "MM"
                     TimeUnit.Years -> "yyyy"
                 }, Locale.getDefault()
             )
 
             repeat(numberOfPoints) {
                 val startTime = calendar.timeInMillis
-                val label = sdf.format(calendar)
+                val label = sdf.format(calendar.time)
 
                 val endNextStepCalendar = calendar.clone() as Calendar //clone method gives any so it has to be changed to Calendar
                 when(selectedTimeUnit) {
@@ -238,8 +238,17 @@ fun StatisticsScreen(
 
             Spacer(Modifier.height(15.dp))
 
+            Text(
+                text = "Statistics Chart",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Spacer(Modifier.height(30.dp))
+
             StatisticsChart(
                 data = chartPoints,
+                selectedMetric = selectedMetric,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
