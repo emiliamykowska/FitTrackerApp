@@ -11,7 +11,8 @@ import androidx.compose.ui.unit.dp
 private val FTColorScheme = lightColorScheme( //daily theme colors
     primary = ButtonsGreen, //color of the buttons
     onPrimary = Color.White, //color of the text on buttons
-    surface = Color.White //color of other components, like card
+    surface = OffWhite, //color of other components, like card
+    background = Color.White
 )
 
 private val FTShapes = Shapes(
