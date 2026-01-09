@@ -113,7 +113,7 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
 
                 InputTextField(
                     value = email, //display email.value
-                    onValueChange = { email = it }, //onValueChange = { newValue -> email.value = newValue }
+                    onValueChange = { newValue -> email = newValue.filter{ it != '\n'} }, //onValueChange = { newValue -> email.value = newValue }
                     label = "you@example.com"
                 )
 
@@ -122,19 +122,19 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Left,
-                    )
+                    textAlign = TextAlign.Left
+                )
 
                 InputTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { newValue -> password = newValue.filter{ it != '\n' }},
                     label = "password",
                     isPassword = true
                 )
 
                 RoundedButton(
                     text="Sign In",
-                    enabled = email.trim().isNotEmpty() && password.trim().isNotEmpty(),
+                    enabled = email.isNotBlank() && password.isNotBlank(),
                     onClick = {
                         val cleanEmail = email.trim()
                         val cleanPassword = password.trim()
