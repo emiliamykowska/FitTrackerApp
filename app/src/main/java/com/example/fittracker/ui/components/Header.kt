@@ -26,6 +26,7 @@ import com.example.fittracker.ui.theme.DarkGreen
 import com.example.fittracker.ui.theme.LightGreen
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsOff
 import com.example.fittracker.data.ActivityEntry
 import com.google.firebase.auth.FirebaseUser
 
@@ -33,7 +34,8 @@ import com.google.firebase.auth.FirebaseUser
 fun Header(
     user: FirebaseUser?,
     showActivities: Boolean,
-    activitiesThisWeek: List<ActivityEntry> = emptyList()
+    activitiesThisWeek: List<ActivityEntry> = emptyList(),
+    notificationsEnabled: Boolean
 ){
     val totalTimeThisWeek = activitiesThisWeek.sumOf {it.duration} / 60.0
     val favouriteActivityThisWeek = (activitiesThisWeek.maxByOrNull { it.activityName })?.activityName
@@ -81,7 +83,7 @@ fun Header(
                 }
 
                 Icon(
-                    imageVector = Icons.Default.Notifications,
+                    imageVector = if (notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
                     contentDescription = "Notification icon",
                     tint = Color.White,
                     modifier = Modifier.size(20.dp)

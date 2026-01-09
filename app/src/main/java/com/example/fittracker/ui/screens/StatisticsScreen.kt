@@ -39,7 +39,9 @@ fun StatisticsScreen(
         Text(
             text = "You haven't add any activities yet, add your first one after a workout to see your stats!",
             textAlign = TextAlign.Justify,
-            fontSize = 15.sp
+            fontSize = 15.sp,
+            modifier = Modifier
+                .padding(10.dp)
         )
     }
     else {

@@ -16,12 +16,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.PersonPin
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -36,6 +44,7 @@ import com.example.fittracker.ui.components.RoundedButton
 import com.example.fittracker.ui.theme.ButtonsGreen
 import com.example.fittracker.ui.theme.DarkGreen
 import com.example.fittracker.ui.theme.LightGreen
+import com.example.fittracker.ui.theme.OffWhite
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import java.time.ZoneId
@@ -45,7 +54,9 @@ import java.time.ZoneId
 fun ProfileScreen(
     onNavigate: (String) -> Unit,
     onLogout: () -> Unit,
-    allActivities: List<ActivityEntry>
+    allActivities: List<ActivityEntry>,
+    notificationsEnabled: Boolean,
+    onNotificationsChanged: (Boolean) -> Unit
 ){
     val currentUser = Firebase.auth.currentUser
     val scrollState = rememberScrollState()
@@ -143,7 +154,66 @@ fun ProfileScreen(
             }
         }
 
-        RoundedButton(text="Log out", onClick = onLogout)
-    }
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(15.dp)){
 
+            Column(
+                modifier = Modifier.padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ){
+                Text(
+                    text = "Settings",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(15.dp),
+                    colors = CardDefaults.cardColors(containerColor = OffWhite)
+                ){
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ){
+                            Icon(
+                                imageVector = if (notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
+                                contentDescription = "Notification icon",
+                                tint = ButtonsGreen,
+                                modifier = Modifier.size(20.dp)
+                            )
+
+                            Column(
+                                verticalArrangement = Arrangement.Center
+                            ){
+                                Text(
+                                    text = "Notifications",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = if (notificationsEnabled) "Enabled" else "Disabled",
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                        Switch(
+                            checked = notificationsEnabled,
+                            onCheckedChange = onNotificationsChanged
+                        )
+                    }
+                }
+
+                RoundedButton(text="Log out", onClick = onLogout)
+            }
+        }
+    }
 }

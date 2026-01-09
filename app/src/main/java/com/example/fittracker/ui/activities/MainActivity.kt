@@ -69,6 +69,8 @@ class MainActivity: ComponentActivity(){
                 //navBackStackEntry is the screen the user sees right now, .destination to see where this entry leads to (navDestination object), .route is the string name of this destination
                 val shouldShowHeaderAndBar = currentRoute != "login" && currentRoute != "register"
 
+                var notificationsEnabled by remember { mutableStateOf(true) }
+
                 LaunchedEffect(Unit) { //change user state if was logged in
                     Firebase.auth.addAuthStateListener { auth ->
                         user = auth.currentUser
@@ -114,12 +116,14 @@ class MainActivity: ComponentActivity(){
                             Header(
                                 user = user,
                                 showActivities = allActivities != null && activitiesThisWeek.isNotEmpty(),
-                                activitiesThisWeek = activitiesThisWeek)
+                                activitiesThisWeek = activitiesThisWeek,
+                                notificationsEnabled = notificationsEnabled)
                         }
                         else if (shouldShowHeaderAndBar) {
                             Header(
                                 user = user,
-                                showActivities = false)
+                                showActivities = false,
+                                notificationsEnabled = notificationsEnabled)
                         }
                     },
                     bottomBar = {
@@ -181,7 +185,9 @@ class MainActivity: ComponentActivity(){
                                             Firebase.auth.signOut()
                                             navController.navigate("login") {popUpTo("home") {inclusive = true} } //go to login and pop whole history till home (from top to bottom) as it is always first screen if logged in, including home so can't login again by using back arrow
                                         },
-                                        allActivities = allActivities!!
+                                        allActivities = allActivities!!,
+                                        notificationsEnabled = notificationsEnabled,
+                                        onNotificationsChanged = { notificationsEnabled = it }
                                     )
                                 }
 
