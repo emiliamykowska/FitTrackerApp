@@ -1,6 +1,5 @@
 package com.example.fittracker.ui.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text

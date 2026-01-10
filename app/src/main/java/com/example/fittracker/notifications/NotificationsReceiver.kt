@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.example.fittracker.MainActivity
-import com.example.fittracker.NotificationUtils
 import com.example.fittracker.R
 import java.util.Calendar
 
@@ -51,7 +50,7 @@ class NotificationsReceiver: BroadcastReceiver() {
             context,
             NotificationsUtils.CHANNEL_ID //uses channel id created it Notifications Utils
         )
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.logo_ft)
             .setContentTitle(title)
             .setContentText(message)
             .setContentIntent(tapPendingIntent)
