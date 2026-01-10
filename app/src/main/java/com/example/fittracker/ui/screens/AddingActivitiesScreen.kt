@@ -1,5 +1,6 @@
 package com.example.fittracker.ui.screens
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.edit
 
 @Composable
 fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
@@ -133,8 +135,16 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
                         db.collection("activities")
                             .add(activityEntry)
                             .addOnSuccessListener {
-                                onNavigate("home")
+
+                                val preferences = context.getSharedPreferences("FitTrackerPreferences", Context.MODE_PRIVATE)
+                                //shared preferences is xml file inside phone memory, the function searches for file FitTrackerPreferenes or creates it if doesnt exist
+                                //mode private so other apps cannot see whats inside this file
+                                preferences.edit {
+                                    putLong("last_workout_timestamp", System.currentTimeMillis())
+                                } //write it to this xml file
+
                                 Toast.makeText(context, "Activity was successfully added!", Toast.LENGTH_SHORT).show()
+                                onNavigate("home")
                             }
                             .addOnFailureListener { exception ->
                                 val errorText = exception.localizedMessage ?: "Unknown error occurred"

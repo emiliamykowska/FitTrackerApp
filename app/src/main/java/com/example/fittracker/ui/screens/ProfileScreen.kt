@@ -1,5 +1,6 @@
 package com.example.fittracker.ui.screens
 
+import android.content.Context
 import android.widget.Button
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,10 +36,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.fittracker.NotificationUtils
 import com.example.fittracker.data.ActivityEntry
+import com.example.fittracker.notifications.NotificationsUtils
 import com.example.fittracker.ui.components.ProfileCard
 import com.example.fittracker.ui.components.RoundedButton
 import com.example.fittracker.ui.theme.ButtonsGreen
@@ -48,6 +52,7 @@ import com.example.fittracker.ui.theme.OffWhite
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import java.time.ZoneId
+import androidx.core.content.edit
 
 
 @Composable
@@ -58,6 +63,7 @@ fun ProfileScreen(
     notificationsEnabled: Boolean,
     onNotificationsChanged: (Boolean) -> Unit
 ){
+    val context = LocalContext.current
     val currentUser = Firebase.auth.currentUser
     val scrollState = rememberScrollState()
 
@@ -126,7 +132,8 @@ fun ProfileScreen(
                         .fillMaxWidth()
                         .background(
                             brush = Brush.horizontalGradient(listOf(LightGreen, DarkGreen)),
-                            shape = RoundedCornerShape(15.dp))
+                            shape = RoundedCornerShape(15.dp)
+                        )
                         .padding(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -207,7 +214,24 @@ fun ProfileScreen(
                         }
                         Switch(
                             checked = notificationsEnabled,
-                            onCheckedChange = onNotificationsChanged
+                            onCheckedChange = { isEnabled ->
+                                onNotificationsChanged(isEnabled)
+
+                                val preferences = context.getSharedPreferences("FitTrackerPreferences", Context.MODE_PRIVATE)
+                                preferences.edit {
+                                    putBoolean(
+                                        "notifications_enabled",
+                                        notificationsEnabled
+                                    )
+                                }
+
+                                if (isEnabled){
+                                    NotificationsUtils.scheduleNotification(context)
+                                }
+                                else{
+                                    NotificationsUtils.cancelNotification(context)
+                                }
+                            }
                         )
                     }
                 }

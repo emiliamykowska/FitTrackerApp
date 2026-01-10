@@ -1,5 +1,6 @@
 package com.example.fittracker.ui.activities
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,11 +16,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.fittracker.NotificationUtils
 import com.example.fittracker.data.ActivityEntry
+import com.example.fittracker.notifications.NotificationsUtils
 import com.example.fittracker.ui.components.BottomAppBar
 import com.example.fittracker.ui.components.Header
 import com.example.fittracker.ui.components.LoadingBox
@@ -45,6 +49,8 @@ class MainActivity: ComponentActivity(){
         super.onCreate(savedInstanceState)
         // before doing things below call parent onCreate
 
+        NotificationsUtils.createNotificationChannel(this) //before setContent coz its not part of the ui and doesnt need to be refreshed
+
         setContent { // tells to use jetpackcompose, not xml
 
             FitTrackerTheme {
@@ -53,6 +59,10 @@ class MainActivity: ComponentActivity(){
                 // remember so the state states there after each micro refresh
                 // currentscreen is of type MutableState<String>, so there is by so .value dont have to be used
                 // by is a "delegat"
+
+                val context = LocalContext.current
+                val preferences = remember {context.getSharedPreferences("FitTrackerPreferences", Context.MODE_PRIVATE)}
+                var notificationsEnabled by remember { mutableStateOf(preferences.getBoolean("notifications_enabled", true)) }
 
                 var user by remember { mutableStateOf(Firebase.auth.currentUser) }
                 var allActivities by remember {mutableStateOf<List<ActivityEntry>?>(null)}
@@ -68,8 +78,6 @@ class MainActivity: ComponentActivity(){
                 val currentRoute = navBackStackEntry?.destination?.route
                 //navBackStackEntry is the screen the user sees right now, .destination to see where this entry leads to (navDestination object), .route is the string name of this destination
                 val shouldShowHeaderAndBar = currentRoute != "login" && currentRoute != "register"
-
-                var notificationsEnabled by remember { mutableStateOf(true) }
 
                 LaunchedEffect(Unit) { //change user state if was logged in
                     Firebase.auth.addAuthStateListener { auth ->
