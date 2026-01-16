@@ -22,15 +22,13 @@ fun HomeScreen(
     onNavigate: (String) -> Unit,
     allActivities: List<ActivityEntry>
 ) {
-    val scrollState = rememberScrollState()
-
     val recentActivities = allActivities.take(4) //only most 4 recent activities
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-            .verticalScroll(scrollState),
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(15.dp),
         horizontalAlignment = Alignment.CenterHorizontally
 

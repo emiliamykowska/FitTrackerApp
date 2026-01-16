@@ -6,9 +6,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import com.example.fittracker.MainActivity
+import com.example.fittracker.ui.activities.MainActivity
 import com.example.fittracker.R
 import java.util.Calendar
+
 
 //receiver uses the channel, it's "woken up" when it's time to send notification
 class NotificationsReceiver: BroadcastReceiver() {
@@ -34,8 +35,11 @@ class NotificationsReceiver: BroadcastReceiver() {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         // manages displaying the notifications
 
-        val tapIntent = Intent(context, MainActivity::class.java)
-        // Intent tell which screen should be opened after clicking on notification
+        val tapIntent = Intent(context, MainActivity::class.java).apply {
+            // Intent tell which screen should be opened after clicking on notification
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            // if app is working dont create new version, just show it
+        }
 
         val tapPendingIntent = PendingIntent.getActivity(
             context, 0, tapIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE

@@ -6,8 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.icu.util.Calendar
-import com.example.fittracker.NotificationUtils
+import java.util.Calendar
 
 object NotificationsUtils {
     const val CHANNEL_ID = "reminders_channel"
@@ -18,7 +17,7 @@ object NotificationsUtils {
         val descriptionText = "Channel used for scheduled local notifications"
         val importance = NotificationManager.IMPORTANCE_DEFAULT
 
-        val channel = NotificationChannel(NotificationUtils.CHANNEL_ID, name, importance).apply {
+        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
             description = descriptionText
         }
         // Defines the channel with an ID, a user-visible name, and an importance level
@@ -42,7 +41,7 @@ object NotificationsUtils {
         )
 
         val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 18)
+            set(Calendar.HOUR_OF_DAY, 16)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
 

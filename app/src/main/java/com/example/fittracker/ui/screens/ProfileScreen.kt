@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -88,7 +89,10 @@ fun ProfileScreen(
             icon = Icons.Default.PersonPin,
             value = "${currentUser?.displayName}",
             label ="${currentUser?.email}",
-            modifierIcon = Modifier.size(55.dp)
+            modifier = Modifier.wrapContentHeight(),
+            iconSize = 50.dp,
+            valueFontSize = 22.sp,
+            labelFontSize = 18.sp
         )
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -97,21 +101,21 @@ fun ProfileScreen(
                 icon = Icons.Default.EmojiEvents,
                 value = "$totalActivities",
                 label ="Activities",
-                modifierCard = Modifier.weight(1f)
+                modifier = Modifier.weight(1f)
             )
 
             ProfileCard(
                 icon =  Icons.Default.Timer,
                 value = "%.1f h".format(totalDuration),
                 label ="Total Time",
-                modifierCard = Modifier.weight(1f)
+                modifier = Modifier.weight(1f)
             )
 
             ProfileCard(
                 icon = Icons.Default.CalendarToday,
                 value = "$daysActive",
                 label ="Days Active",
-                modifierCard = Modifier.weight(1f)
+                modifier = Modifier.weight(1f)
             )
         }
 
@@ -213,7 +217,7 @@ fun ProfileScreen(
                                 preferences.edit {
                                     putBoolean(
                                         "notifications_enabled",
-                                        notificationsEnabled
+                                        isEnabled
                                     )
                                 }
 

@@ -215,7 +215,7 @@ fun RegisterScreen(onNavigate: (String) -> Unit) { //function doesnt take anythi
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                 }
-                                                onNavigate("login")
+                                                onNavigate("home")
                                             }
                                     } else {
                                         val errorText = task.exception?.localizedMessage

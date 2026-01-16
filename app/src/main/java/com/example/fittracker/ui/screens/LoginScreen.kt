@@ -49,13 +49,10 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
     val auth = Firebase.auth //authentication
     val context = LocalContext.current
 
-    val scrollState = rememberScrollState()
-
-
     Column (
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
+            .verticalScroll(rememberScrollState())
             .background(Brush.verticalGradient(
                 colors = listOf(LightGreen, DarkGreen))),
         horizontalAlignment = Alignment.CenterHorizontally,

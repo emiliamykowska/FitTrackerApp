@@ -1,6 +1,9 @@
 package com.example.fittracker.ui.activities
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,6 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -46,6 +51,7 @@ class MainActivity: ComponentActivity(){
         // before doing things below call parent onCreate
 
         NotificationsUtils.createNotificationChannel(this) //before setContent coz its not part of the ui and doesnt need to be refreshed
+        requestNotificationPermissionIfNeeded()
 
         setContent { // tells to use jetpackcompose, not xml
 
@@ -213,6 +219,24 @@ class MainActivity: ComponentActivity(){
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun requestNotificationPermissionIfNeeded(){
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            //check users system version, if asking for permission is needed; tiramisu is code for API 33
+            val hasPermission = ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED //check if used already granted permission
+
+            if (!hasPermission){
+                ActivityCompat.requestPermissions( //display window with ask for permission if not already granted
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    1001
+                )
             }
         }
     }

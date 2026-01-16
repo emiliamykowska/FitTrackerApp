@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fittracker.ui.theme.ButtonsGreen
@@ -23,11 +25,13 @@ fun ProfileCard(
     icon: ImageVector,
     value: String,
     label: String,
-    modifierCard: Modifier = Modifier,
-    modifierIcon: Modifier = Modifier.size(24.dp)
+    modifier: Modifier = Modifier,
+    iconSize: Dp = (24.dp),
+    valueFontSize: TextUnit = 15.sp,
+    labelFontSize: TextUnit = 11.sp
 ){
     Card(
-        modifier = modifierCard,
+        modifier = modifier,
         shape = RoundedCornerShape(15.dp)
     ){
         Column(
@@ -38,7 +42,7 @@ fun ProfileCard(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ){
             Icon(
-                modifier = modifierIcon,
+                modifier = Modifier.size(iconSize),
                 imageVector = icon,
                 contentDescription = label,
                 tint = ButtonsGreen
@@ -46,13 +50,13 @@ fun ProfileCard(
 
             Text(
                 text = value,
-                fontSize = 15.sp,
+                fontSize = valueFontSize,
                 fontWeight = FontWeight.Bold
             )
 
             Text(
                 text = label,
-                fontSize = 11.sp
+                fontSize = labelFontSize
             )
         }
     }
