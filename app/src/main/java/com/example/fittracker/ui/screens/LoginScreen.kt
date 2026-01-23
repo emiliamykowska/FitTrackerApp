@@ -110,7 +110,7 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
 
                 InputTextField(
                     value = email, //display email.value
-                    onValueChange = { newValue -> email = newValue.filter{ it != '\n'} }, //onValueChange = { newValue -> email.value = newValue }
+                    onValueChange = { newValue -> email = newValue.filter{  it != '\n' && it != ' ' } }, //onValueChange = { newValue -> email.value = newValue }
                     label = "you@example.com"
                 )
 
@@ -124,7 +124,7 @@ fun LoginScreen(onNavigate: (String) -> Unit) {
 
                 InputTextField(
                     value = password,
-                    onValueChange = { newValue -> password = newValue.filter{ it != '\n' }},
+                    onValueChange = { newValue -> password = newValue.filter{  it != '\n' && it != ' ' }},
                     label = "password",
                     isPassword = true
                 )
