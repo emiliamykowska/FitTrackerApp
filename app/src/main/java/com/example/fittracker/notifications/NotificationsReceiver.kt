@@ -59,7 +59,7 @@ class NotificationsReceiver: BroadcastReceiver() {
             .setContentText(message)
             .setContentIntent(tapPendingIntent)
             .setAutoCancel(true) //notification vanishes after clicking
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
         notificationManager.notify(1, notification) // show notification with this id

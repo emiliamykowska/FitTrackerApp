@@ -99,7 +99,7 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
                 )
             }
         }}
-
+//change it to slider or sth
         item { InputTextField(
             value = customDuration,
             onValueChange = { input ->

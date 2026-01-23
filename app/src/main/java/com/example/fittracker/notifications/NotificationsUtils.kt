@@ -40,8 +40,10 @@ object NotificationsUtils {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        alarmManager.cancel(pendingIntent) //cancel the alarm so there is no 2 if was set before
+
         val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 16)
+            set(Calendar.HOUR_OF_DAY, 18)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
 
@@ -57,7 +59,6 @@ object NotificationsUtils {
             pendingIntent
         )
     }
-
 
     fun cancelNotification(context: Context){
         val intent = Intent(context, NotificationsReceiver::class.java)

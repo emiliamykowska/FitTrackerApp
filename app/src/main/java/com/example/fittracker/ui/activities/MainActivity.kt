@@ -42,6 +42,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.util.Calendar
+import androidx.activity.enableEdgeToEdge
 
 class MainActivity: ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?){ // the function is called once, when app is launched
@@ -49,6 +50,7 @@ class MainActivity: ComponentActivity(){
         //Bundle is like a dictionary, can be null if is launched first time
         super.onCreate(savedInstanceState)
         // before doing things below call parent onCreate
+//        enableEdgeToEdge()
 
         NotificationsUtils.createNotificationChannel(this) //before setContent coz its not part of the ui and doesnt need to be refreshed
         requestNotificationPermissionIfNeeded()
