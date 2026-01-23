@@ -38,7 +38,12 @@ fun Header(
     notificationsEnabled: Boolean
 ){
     val totalTimeThisWeek = activitiesThisWeek.sumOf {it.duration} / 60.0
-    val favouriteActivityThisWeek = (activitiesThisWeek.maxByOrNull { it.activityName })?.activityName
+    val favouriteActivityThisWeek = activitiesThisWeek
+        .groupBy { it.activityName } //it gives List<List<ActivityEntry>> list of keys and values
+        .values
+        .sortedWith(compareBy({it.size}, { it.sumOf { entry -> entry.duration } }))
+        .lastOrNull() //all activities with the name with most entries
+        ?.lastOrNull()?.activityName //last activity of the list
 
     Box(
         modifier = Modifier

@@ -64,10 +64,14 @@ fun ProfileScreen(
 
     val totalDuration = allActivities.sumOf { it.duration } / 60.0 //to get hours
 
-    val favouriteActivity = allActivities
+    val favouriteActivityGroup = allActivities
         .groupBy { it.activityName } //gives like a dictionary
-        .maxByOrNull { it.value.size } //values are entries with given activityName, we want where it's greatest
-         //activityName with the greatest number of entries
+        .values
+        .sortedWith(compareBy ({ it.size }, {it.sumOf {entry -> entry.duration}}))
+        .lastOrNull()
+
+    val favouriteActivityName = favouriteActivityGroup?.lastOrNull()?.activityName
+    val favouriteActivityCount = favouriteActivityGroup?.size ?: 0
 
     val daysActive = allActivities
         .distinctBy { //it gives list so .size is used
@@ -119,7 +123,7 @@ fun ProfileScreen(
             )
         }
 
-        if (favouriteActivity != null) {
+        if (favouriteActivityGroup != null) {
             Card(
                 shape = RoundedCornerShape(15.dp)
             ) {
@@ -142,14 +146,14 @@ fun ProfileScreen(
                     )
 
                     Text(
-                        text = favouriteActivity.key,
+                        text = favouriteActivityName?: "None",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
 
                     Text(
-                        text = "${favouriteActivity.value.size} sessions completed",
+                        text = "$favouriteActivityCount sessions completed",
                         fontSize = 12.sp,
                         color = Color.White
                     )
