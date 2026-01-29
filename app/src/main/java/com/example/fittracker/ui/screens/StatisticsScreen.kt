@@ -85,7 +85,7 @@ fun StatisticsScreen(
                     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
                     val startYear = calendar.get(Calendar.YEAR)
 
-                    (currentYear - startYear + 1).coerceAtLeast(1) //min value is 1, so at least 1 year has to be shown
+                    (currentYear - startYear + 1).coerceAtLeast(1) //min value is 5, so at least 5 years have to be shown
                 }
             }
 
@@ -263,10 +263,10 @@ fun StatisticsScreen(
 
 fun getStartCalendar(selectedTimeUnit: TimeUnit, firstEntry: ActivityEntry?): Calendar{
     return Calendar.getInstance().apply {
-        set(java.util.Calendar.HOUR_OF_DAY, 0)
-        set(java.util.Calendar.MINUTE, 0)
-        set(java.util.Calendar.SECOND, 0)
-        set(java.util.Calendar.MILLISECOND, 0)
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
 
 
         when (selectedTimeUnit) {
@@ -286,6 +286,8 @@ fun getStartCalendar(selectedTimeUnit: TimeUnit, firstEntry: ActivityEntry?): Ca
                     time = firstEntry.date.toDate()
                     set(Calendar.MONTH, 0) //0 is january
                     set(Calendar.DAY_OF_MONTH, 1)
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
                 } else {
                     timeInMillis = System.currentTimeMillis()
                 }

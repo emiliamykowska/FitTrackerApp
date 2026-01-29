@@ -96,7 +96,8 @@ fun HistoryScreen(
                     .delete() //document gets an entry from collection with specified path (here activity.id)
                     .addOnSuccessListener { Toast.makeText(context, "Activity was successfully deleted", Toast.LENGTH_SHORT).show() }
                     .addOnFailureListener { exception ->
-                    Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()}
+                    Toast.makeText(context, exception.localizedMessage, Toast.LENGTH_LONG).show()
+                    }
 
                 showDeleteAlert = false
 //                allActivities = allActivities.filter { it.id != idToDelete }

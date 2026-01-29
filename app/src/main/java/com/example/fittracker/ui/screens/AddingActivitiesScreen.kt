@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.example.fittracker.data.ActivityEntry
 import com.example.fittracker.data.activitiesList
 import com.example.fittracker.data.durationList
-import com.example.fittracker.ui.components.ActivityCard
+import com.example.fittracker.ui.components.AddingActivityCard
 import com.example.fittracker.ui.components.InputTextField
 import com.example.fittracker.ui.components.RoundedButton
 import com.google.firebase.Firebase
@@ -64,7 +64,7 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             rowActivities.forEach {activity ->
-                ActivityCard(
+                AddingActivityCard(
                     value = activity.emoji,
                     label = activity.name,
                     isSelected = selectedActivity == activity.name,
@@ -74,7 +74,8 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
             }
         }}
 
-        item{Text(
+        item{
+            Text(
             text = "Choose Activity Duration:",
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold
@@ -87,7 +88,7 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             rowDurations.forEach {time ->
-                ActivityCard(
+                AddingActivityCard(
                     value = "$time",
                     label = "min",
                     isSelected = selectedDuration == time,
@@ -99,8 +100,9 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
                 )
             }
         }}
-//change it to slider or sth
-        item { InputTextField(
+
+        item {
+            InputTextField(
             value = customDuration,
             onValueChange = { input ->
                 if (input.all { it.isDigit() } && input.length <= 3) {
@@ -135,7 +137,6 @@ fun AddingActivitiesScreen(onNavigate: (String) -> Unit){
                         db.collection("activities")
                             .add(activityEntry)
                             .addOnSuccessListener {
-
                                 val preferences = context.getSharedPreferences("FitTrackerPreferences", Context.MODE_PRIVATE)
                                 //shared preferences is xml file inside phone memory, the function searches for file FitTrackerPreferenes or creates it if doesnt exist
                                 //mode private so other apps cannot see whats inside this file

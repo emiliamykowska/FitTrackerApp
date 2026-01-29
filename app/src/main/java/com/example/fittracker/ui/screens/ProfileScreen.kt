@@ -58,7 +58,6 @@ fun ProfileScreen(
 ){
     val context = LocalContext.current
     val currentUser = Firebase.auth.currentUser
-    val scrollState = rememberScrollState()
 
     val totalActivities = allActivities.size
 
@@ -85,7 +84,7 @@ fun ProfileScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
-            .verticalScroll(scrollState),
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ){

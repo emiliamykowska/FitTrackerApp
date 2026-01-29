@@ -42,7 +42,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.util.Calendar
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.systemBarsPadding
 
 class MainActivity: ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?){ // the function is called once, when app is launched
@@ -50,7 +50,6 @@ class MainActivity: ComponentActivity(){
         //Bundle is like a dictionary, can be null if is launched first time
         super.onCreate(savedInstanceState)
         // before doing things below call parent onCreate
-//        enableEdgeToEdge()
 
         NotificationsUtils.createNotificationChannel(this) //before setContent coz its not part of the ui and doesnt need to be refreshed
         requestNotificationPermissionIfNeeded()
@@ -59,12 +58,12 @@ class MainActivity: ComponentActivity(){
 
             FitTrackerTheme {
 //                var currentScreen by remember { mutableStateOf(if (user != null) "home" else "login") } //create state that remembers which screen is shown, login at first
-                // mutablestateof does recompososition, so if it's changed the screen is refreshed
+                // mutablestateof does recomposition, so if it's changed the screen is refreshed
                 // remember so the state states there after each micro refresh
                 // currentscreen is of type MutableState<String>, so there is by so .value dont have to be used
                 // by is a "delegat"
 
-                val context = LocalContext.current
+                val context = LocalContext.current //context is object connecting code with android
                 val preferences = remember {context.getSharedPreferences("FitTrackerPreferences", Context.MODE_PRIVATE)}
                 var notificationsEnabled by remember { mutableStateOf(preferences.getBoolean("notifications_enabled", true)) }
 
@@ -73,23 +72,23 @@ class MainActivity: ComponentActivity(){
                 val db = FirebaseFirestore.getInstance()
 
                 val navController = rememberNavController()
-                // navController controlls which screen user is in, the history of screens and the destination
+                // navController controls which screen user is in, the history of screens and the destination
                 // the app remembers navController even after each microrefresh
                 val startDestination = if (user != null) "home" else "login"
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 //currentBackStack changes the history of navigation into a state, so currentRoute is also updated (so currentRoute can be used)
                 //it has to be a state coz Compose needs state to understand what the app should display/do right now
                 val currentRoute = navBackStackEntry?.destination?.route
-                //navBackStackEntry is the screen the user sees right now, .destination to see where this entry leads to (navDestination object), .route is the string name of this destination
+                //navBackStackEntry is the screen the user sees right now, .destination is current screen (navDestination object), .route is the string name of this destination
                 val shouldShowHeaderAndBar = currentRoute != "login" && currentRoute != "register"
 
-                LaunchedEffect(Unit) { //change user state if was logged in
+                LaunchedEffect(Unit) { //change user state if was logged in, it runs only when app is restarted
                     Firebase.auth.addAuthStateListener { auth ->
                         user = auth.currentUser
                     }
                 }
 
-                LaunchedEffect(user) {
+                LaunchedEffect(user) { //rerun this code when user object changes
                     val currentUser = user
 
                     if (currentUser != null) {
@@ -98,7 +97,7 @@ class MainActivity: ComponentActivity(){
                             .orderBy("date", Query.Direction.DESCENDING)
                             .addSnapshotListener { snapshot, error -> // listen for changes in firebase
                                 if (error != null) {
-                                    return@addSnapshotListener
+                                    return@addSnapshotListener //tells to return from addSnapshowListener, but the whole app works
                                 }
 
                                 if (snapshot != null){ //if is not null that means that collection("activities") was changed f.e. new activity added
@@ -108,7 +107,7 @@ class MainActivity: ComponentActivity(){
                     }
                 }
 
-                val startOfThisWeekMillis = remember { //calculates it only once, after turning off the app
+                val startOfThisWeekMillis = remember { //calculates it only once, after turning on the app
                     Calendar.getInstance().apply { //getting the date of now but modifying
                         set(Calendar.HOUR_OF_DAY, 0) //setting the time to 00:00:00:00, Monday
                         set(Calendar.MINUTE, 0)
@@ -122,101 +121,119 @@ class MainActivity: ComponentActivity(){
                     allActivities?.filter { it.date.toDate().time >= startOfThisWeekMillis } ?: emptyList()
                 }
 
-                Scaffold(
-                    topBar = {
-                        if (shouldShowHeaderAndBar && currentRoute == "home"){
-                            Header(
-                                user = user,
-                                showActivities = allActivities != null && activitiesThisWeek.isNotEmpty(),
-                                activitiesThisWeek = activitiesThisWeek,
-                                notificationsEnabled = notificationsEnabled)
-                        }
-                        else if (shouldShowHeaderAndBar) {
-                            Header(
-                                user = user,
-                                showActivities = false,
-                                notificationsEnabled = notificationsEnabled)
-                        }
-                    },
-                    bottomBar = {
-                        if (shouldShowHeaderAndBar){
-                            BottomAppBar(
-                                currentScreen = currentRoute ?: "home", //home, not start destination coz to get there user has to be logged in
-                                onNavigate = { route -> navController.navigate(route)})
-                        }
-                    },
-                ){ innerPadding -> //innerPadding is used so the content of the screen is shown between header and appbar, not under them
-                    Box(modifier = Modifier
+                Box(
+                    modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding)
-                    ){
-                        NavHost( //navHost is like a map which tells where to go when onNavigate with some parameter is called
-                            // each composable is like an entry in this map (dictionary)
-                            //it's also the place in which screens will be shown
-                            navController = navController,
-                            startDestination = startDestination
-                        ){
-                            composable("login"){
-                                LoginScreen(onNavigate = { route -> navController.navigate(route) })
-                            } //so when onNavigate("login") is in code it knows to go to LoginScreen, coz it calls function(LoginScreen)
-                            composable("register"){
-                                RegisterScreen(onNavigate = { route -> navController.navigate(route) })
+                        .systemBarsPadding()
+                ) {
+                    Scaffold(
+                        topBar = {
+                            if (shouldShowHeaderAndBar && currentRoute == "home") {
+                                Header(
+                                    user = user,
+                                    showActivities = allActivities != null && activitiesThisWeek.isNotEmpty(),
+                                    activitiesThisWeek = activitiesThisWeek,
+                                    notificationsEnabled = notificationsEnabled
+                                )
+                            } else if (shouldShowHeaderAndBar) {
+                                Header(
+                                    user = user,
+                                    showActivities = false,
+                                    notificationsEnabled = notificationsEnabled
+                                )
                             }
-                            composable("home"){
-                                if (allActivities == null){
-                                    LoadingBox()
+                        },
+                        bottomBar = {
+                            if (shouldShowHeaderAndBar) {
+                                BottomAppBar(
+                                    currentScreen = currentRoute
+                                        ?: "home", //home, not start destination coz to get there user has to be logged in
+                                    onNavigate = { route -> navController.navigate(route) })
+                            }
+                        },
+                    ) { innerPadding -> //innerPadding  so the content of the screen is shown between header and appbar, not under them
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                        ) {
+                            NavHost( //navHost is like a map which tells where to go when onNavigate with some parameter is called
+                                // each composable is like an entry in this map (dictionary)
+                                //it's also the place in which screens will be shown
+                                navController = navController,
+                                startDestination = startDestination
+                            ) {
+                                composable("login") {
+                                    LoginScreen(onNavigate = { route -> navController.navigate(route) })
+                                } //so when onNavigate("login") is in code it knows to go to LoginScreen, coz it calls function(LoginScreen)
+                                composable("register") {
+                                    RegisterScreen(onNavigate = { route ->
+                                        navController.navigate(
+                                            route
+                                        )
+                                    })
                                 }
-                                else{
-                                    HomeScreen(
-                                        onNavigate = { route -> navController.navigate(route) },
-                                        allActivities = allActivities!!
-                                    )
-                                }
+                                composable("home") {
+                                    if (allActivities == null) {
+                                        LoadingBox()
+                                    } else {
+                                        HomeScreen(
+                                            onNavigate = { route -> navController.navigate(route) },
+                                            allActivities = allActivities!!
+                                        )
+                                    }
 
-                            }
-                            composable("history"){
-                                if (allActivities == null){
-                                    LoadingBox()
                                 }
-                                else{
-                                    HistoryScreen(
-                                        onNavigate = { route -> navController.navigate(route) },
-                                        allActivities = allActivities!!
-                                    )
-                                }
+                                composable("history") {
+                                    if (allActivities == null) {
+                                        LoadingBox()
+                                    } else {
+                                        HistoryScreen(
+                                            onNavigate = { route -> navController.navigate(route) },
+                                            allActivities = allActivities!!
+                                        )
+                                    }
 
-                            }
-                            composable("profile"){
-                                if (allActivities == null){
-                                    LoadingBox()
                                 }
-                                else{
-                                    ProfileScreen(
-                                        onNavigate = { route -> navController.navigate(route) },
-                                        onLogout = {
-                                            Firebase.auth.signOut()
-                                            navController.navigate("login") {popUpTo("home") {inclusive = true} } //go to login and pop whole history till home (from top to bottom) as it is always first screen if logged in, including home so can't login again by using back arrow
-                                        },
-                                        allActivities = allActivities!!,
-                                        notificationsEnabled = notificationsEnabled,
-                                        onNotificationsChanged = { notificationsEnabled = it }
-                                    )
-                                }
+                                composable("profile") {
+                                    if (allActivities == null) {
+                                        LoadingBox()
+                                    } else {
+                                        ProfileScreen(
+                                            onNavigate = { route -> navController.navigate(route) },
+                                            onLogout = {
+                                                Firebase.auth.signOut()
+                                                navController.navigate("login") {
+                                                    popUpTo("home") {
+                                                        inclusive = true
+                                                    }
+                                                } //go to login and pop whole history till home (from top to bottom) as it is always first screen if logged in, including home so can't login again by using back arrow
+                                            },
+                                            allActivities = allActivities!!,
+                                            notificationsEnabled = notificationsEnabled,
+                                            onNotificationsChanged = { notificationsEnabled = it }
+                                        )
+                                    }
 
-                            }
-                            composable("statistics"){
-                                if (allActivities == null){
-                                    LoadingBox()
                                 }
-                                else{
-                                    StatisticsScreen(
-                                        onNavigate = { route -> navController.navigate(route) },
-                                        allActivities = allActivities!!)
-                                }
+                                composable("statistics") {
+                                    if (allActivities == null) {
+                                        LoadingBox()
+                                    } else {
+                                        StatisticsScreen(
+                                            onNavigate = { route -> navController.navigate(route) },
+                                            allActivities = allActivities!!
+                                        )
+                                    }
 
-                            }
-                            composable("addActivity"){
-                                AddingActivitiesScreen(onNavigate = {route -> navController.navigate(route)})
+                                }
+                                composable("addActivity") {
+                                    AddingActivitiesScreen(onNavigate = { route ->
+                                        navController.navigate(
+                                            route
+                                        )
+                                    })
+                                }
                             }
                         }
                     }
@@ -226,12 +243,12 @@ class MainActivity: ComponentActivity(){
     }
 
     private fun requestNotificationPermissionIfNeeded(){
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
             //check users system version, if asking for permission is needed; tiramisu is code for API 33
             val hasPermission = ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED //check if used already granted permission
+            ) == PackageManager.PERMISSION_GRANTED //check if user already granted permission
 
             if (!hasPermission){
                 ActivityCompat.requestPermissions( //display window with ask for permission if not already granted

@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.example.fittracker.ui.theme.ButtonsGreen
 
 @Composable
-fun ActivityCard(
+fun AddingActivityCard(
     value: String,
     label: String,
     isSelected: Boolean,

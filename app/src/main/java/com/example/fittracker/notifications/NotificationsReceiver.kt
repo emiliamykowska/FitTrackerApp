@@ -48,7 +48,7 @@ class NotificationsReceiver: BroadcastReceiver() {
         // context is connection with the system, tells which app want to do sth
         // requestCode is id of notification (reminder, congratulation etc)
         // flag update tells to only update the notification if its the same as previous
-        // flag immutable means that content of notification cant be changes after being sent
+        // flag immutable means that content of notification cant be changed after being sent
 
         val notification = NotificationCompat.Builder(
             context,

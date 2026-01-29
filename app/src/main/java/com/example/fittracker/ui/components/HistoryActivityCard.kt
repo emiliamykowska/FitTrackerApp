@@ -35,7 +35,7 @@ fun HistoryActivityCard(
     onDelete: () -> Unit
 ){
     val sdf = remember { SimpleDateFormat("MMM d, yyyy h:mm a", Locale.ENGLISH) } //Locale.english so name of months is in english
-    val formattedDate = sdf.format(timestamp.toDate()) //change timestamp to date and then format
+    val formatedDate = sdf.format(timestamp.toDate()) //change timestamp to date and then format
 
     Card(
         modifier = Modifier
@@ -69,7 +69,7 @@ fun HistoryActivityCard(
                     )
 
                     Text(
-                        text = formattedDate,
+                        text = formatedDate,
                         fontSize = 13.sp
                     )
                 }

@@ -30,7 +30,7 @@ fun RecentActivityCard(
     duration: Int,
     timestamp: Timestamp
 ){
-    val sdf = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) } //Locale.getDefault gives users country name of months fe
+    val sdf = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
     val formattedDate = sdf.format(timestamp.toDate()) //change timestamp to date and then format
 
     Card(

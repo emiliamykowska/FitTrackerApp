@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.example.fittracker.R
 
 @Composable
-fun Logo(modifier: Modifier = Modifier){
+fun Logo(){
     Surface( //to ensure circular shape
         modifier = Modifier
             .size(70.dp)
