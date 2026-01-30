@@ -283,11 +283,12 @@ fun getStartCalendar(selectedTimeUnit: TimeUnit, firstEntry: ActivityEntry?): Ca
 
             TimeUnit.Years -> {
                 if (firstEntry != null) {
-                    time = firstEntry.date.toDate()
+//                    time = firstEntry.date.toDate()
                     set(Calendar.MONTH, 0) //0 is january
                     set(Calendar.DAY_OF_MONTH, 1)
-                    set(Calendar.HOUR_OF_DAY, 0)
-                    set(Calendar.MINUTE, 0)
+                    add(Calendar.YEAR, -5)
+//                    set(Calendar.HOUR_OF_DAY, 0)
+//                    set(Calendar.MINUTE, 0)
                 } else {
                     timeInMillis = System.currentTimeMillis()
                 }
