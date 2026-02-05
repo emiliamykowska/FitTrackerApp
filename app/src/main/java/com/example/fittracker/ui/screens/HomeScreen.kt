@@ -51,19 +51,19 @@ fun HomeScreen(
         ){
             Row(
                 modifier = Modifier.padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ){
                 Text(text = "📅", fontSize = 34.sp)
                 Spacer(modifier = Modifier.width(15.dp))
                 Column {
                     Text(
                         text = "Activity Calendar",
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp
                     )
                     Text(
                         text = "View your progress by date",
-                        color = androidx.compose.ui.graphics.Color.Gray,
                         fontSize = 14.sp
                     )
                 }
@@ -95,7 +95,7 @@ fun HomeScreen(
         }
         else if (allActivities.size > 4){
             Text(
-                text = "To see all your activities go to history panel",
+                text = "To see all your activities go to the history panel",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp,
                 textAlign = TextAlign.Left,

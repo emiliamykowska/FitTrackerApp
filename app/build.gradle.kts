@@ -5,13 +5,14 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+
 android {
     namespace = "com.example.fittracker"
-    compileSdk = 36   // lub 34; ważne: ≥33
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.fittracker"
-        minSdk = 26    // 33 to overkill, jeśli to tylko demo
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -50,8 +51,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidbrowserhelper)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.ui.graphics)
+//    implementation(libs.androidx.material3)
+//    implementation(libs.androidx.ui.graphics)
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.foundation:foundation-layout")
     implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -64,6 +67,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+//    implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("com.google.firebase:firebase-firestore")
 }

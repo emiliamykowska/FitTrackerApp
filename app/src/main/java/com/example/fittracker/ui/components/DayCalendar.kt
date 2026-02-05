@@ -16,18 +16,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fittracker.data.ActivityEntry
 import com.example.fittracker.ui.theme.LightGreen
-import com.kizitonwose.calendar.core.CalendarDay
-import com.kizitonwose.calendar.core.DayPosition
+import java.time.LocalDate
 
 @Composable
 fun DayCalendar(
-    day: CalendarDay,
+    date: LocalDate,
+    isCurrentMonth: Boolean,
     activities: List<ActivityEntry>
 ){
     Box(
         modifier = Modifier
             .aspectRatio(1f) //so each day is square of the same size, even with emojis inside
-            .padding(2.dp)
+            .padding(1.dp)
             .background(
                 color = if (activities.isNotEmpty()) LightGreen.copy(alpha = 0.2f) else Color.White,
                 shape = RoundedCornerShape(8.dp)
@@ -38,9 +38,9 @@ fun DayCalendar(
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Text(
-                text = day.date.dayOfMonth.toString(),
+                text = date.dayOfMonth.toString(),
                 fontSize = 12.sp,
-                color = if (day.position == DayPosition.MonthDate) Color.Black else Color.LightGray //if day is from another month change color to gray
+                color = if (isCurrentMonth) Color.Black else Color.LightGray //if day is from another month change color to gray
             )
 
             if (activities.isNotEmpty()){
