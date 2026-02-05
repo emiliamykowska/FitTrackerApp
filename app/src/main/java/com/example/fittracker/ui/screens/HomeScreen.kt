@@ -60,7 +60,7 @@ fun HomeScreen(
                     Text(
                         text = "Activity Calendar",
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 18.sp
+                        fontSize = 16.sp
                     )
                     Text(
                         text = "View your progress by date",

@@ -32,7 +32,7 @@ fun DayCalendar(
                 color = if (activities.isNotEmpty()) LightGreen.copy(alpha = 0.2f) else Color.White,
                 shape = RoundedCornerShape(8.dp)
             ),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopCenter
     ){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
