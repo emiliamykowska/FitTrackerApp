@@ -43,6 +43,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.util.Calendar
 import androidx.compose.foundation.layout.systemBarsPadding
+import com.example.fittracker.ui.screens.CalendarScreen
 
 class MainActivity: ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?){ // the function is called once, when app is launched
@@ -233,6 +234,16 @@ class MainActivity: ComponentActivity(){
                                             route
                                         )
                                     })
+                                }
+                                composable("calendar"){
+                                    if (allActivities == null) {
+                                        LoadingBox()
+                                    } else {
+                                        CalendarScreen(
+                                            onNavigate = { route -> navController.navigate(route) },
+                                            allActivities = allActivities!!
+                                        )
+                                    }
                                 }
                             }
                         }
